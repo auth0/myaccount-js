@@ -1,0 +1,37 @@
+# Specify files that shouldn't be modified by Fern
+
+# Modified main index file to export our custom wrapper
+
+src/index.ts
+
+# Example usage file
+
+example.ts
+
+# Mock configuration files
+
+.mock/
+
+# Custom wrapper client and utilities
+
+src/wrappers/
+src/utils/
+
+# Custom tests for wrapper and utilities
+
+tests/unit/wrappers/
+tests/unit/utils/auth0ClientTelemetry.test.ts
+tests/unit/utils/clientInfo.test.ts
+tests/unit/utils/base64url.test.ts
+tests/unit/fetcher/auth0Fetcher.test.ts
+
+.gitignore
+typedoc.config.js
+
+# ESLint configuration
+
+eslint.config.mjs
+
+# Husky pre-commit hooks
+
+.husky/

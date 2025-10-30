@@ -1,0 +1,42 @@
+name: ci
+
+on: [push]
+
+jobs:
+    compile:
+        runs-on: ubuntu-22.04-2cpu-8ram-75ssd
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Set up node
+              uses: actions/setup-node@v3
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # pin@v4.2.0
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Compile
+              run: pnpm build
+
+    test:
+        runs-on: ubuntu-22.04-2cpu-8ram-75ssd
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Set up node
+              uses: actions/setup-node@v3
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # pin@v4.2.0
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Test
+              run: pnpm test
