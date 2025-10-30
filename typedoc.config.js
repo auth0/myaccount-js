@@ -88,7 +88,7 @@ module.exports = {
     cleanOutputDir: true,
     hideGenerator: true,
     navigationLinks: {
-        GitHub: "https://github.com/atko-cic/auth0-myaccount-ts-sdk",
+        GitHub: "https://github.com/auth0/myaccount-js",
         npm: "https://www.npmjs.com/package/my-account",
     },
     visibilityFilters: {
