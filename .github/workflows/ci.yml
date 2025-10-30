@@ -1,42 +1,82 @@
-name: ci
+name: CI
 
-on: [push]
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-    compile:
-        runs-on: ubuntu-22.04-2cpu-8ram-75ssd
-
+    lint:
+        name: Lint & Format
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
 
-            - name: Set up node
-              uses: actions/setup-node@v3
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20.x"
 
             - name: Install pnpm
               uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # pin@v4.2.0
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
-            - name: Compile
+            - name: Format check
+              run: pnpm format --check
+
+            - name: Lint
+              run: pnpm lint
+
+    build:
+        name: Build & Package Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20.x"
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # pin@v4.2.0
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build
               run: pnpm build
 
-    test:
-        runs-on: ubuntu-22.04-2cpu-8ram-75ssd
+            - name: Test built artifacts
+              run: |
+                  node dist/esm/index.mjs
+                  node dist/cjs/index.js
 
+    test:
+        name: Test (Node.js ${{ matrix.node-version }})
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [20.x, 22.x, 24.x]
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
 
-            - name: Set up node
-              uses: actions/setup-node@v3
+            - name: Setup Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
 
             - name: Install pnpm
               uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # pin@v4.2.0
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - name: Test
               run: pnpm test

@@ -27,6 +27,9 @@ tests/unit/fetcher/auth0Fetcher.test.ts
 
 .gitignore
 typedoc.config.js
+.version
+.github/
+README.md
 
 # ESLint configuration
 

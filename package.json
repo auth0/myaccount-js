@@ -2,7 +2,7 @@
     "name": "my-account",
     "version": "0.69.0",
     "private": false,
-    "repository": "github:atko-cic/auth0-myaccount-ts-sdk",
+    "repository": "github:auth0/myaccount-js",
     "license": "MIT",
     "type": "commonjs",
     "main": "./dist/cjs/index.js",
