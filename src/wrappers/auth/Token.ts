@@ -4,7 +4,7 @@ import * as core from "../../core/index.js";
  * Auth0 token options that can be used with the MyOrg Client.
  * Provides a user-friendly interface for different token patterns.
  *
- * @group MyOrg API
+ * @group MyAccount API
  * @public
  */
 export namespace Auth0Token {
@@ -86,7 +86,7 @@ export namespace Auth0Token {
  * - **Simple function**: `() => string` - For dynamic tokens without scope handling
  * - **Scope-aware function**: `({ authorizationParams }) => string` - **RECOMMENDED** for Auth0 applications
  *
- * @group MyOrg API
+ * @group MyAccount API
  * @public
  *
  * @example Static token (testing only)
