@@ -275,7 +275,7 @@ console.log(rawResponse.headers["X-My-Header"]);
 
 The SDK works in the following runtimes:
 
-- Node.js 20.19.0+, 22.12.0+, 24+
+- Node.js 20+, 22+, 24+
 - Vercel
 - Cloudflare Workers
 - Deno v1.25+
