@@ -1,8 +1,8 @@
 /**
- * Authentication utilities for MyOrg Client.
+ * Authentication utilities for MyAccountClient.
  *
  * @module Wrappers.Auth
- * @group MyOrg API
+ * @group MyAccount API
  */
 
 export type { Auth0TokenSupplier, Auth0Token } from "./Token.js";
