@@ -17,7 +17,7 @@
 
 This library supports the following tooling versions:
 
-- Node.js: `^20.19.0 || ^22.12.0 || ^24.0.0`
+- Node.js: 20 or higher
 
 ### Installation
 
@@ -275,7 +275,7 @@ console.log(rawResponse.headers["X-My-Header"]);
 
 The SDK works in the following runtimes:
 
-- Node.js 20+, 22+, 24+
+- Node.js 20 or higher
 - Vercel
 - Cloudflare Workers
 - Deno v1.25+
