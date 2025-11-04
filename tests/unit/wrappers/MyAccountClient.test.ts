@@ -5,11 +5,14 @@ import { generateClientInfo } from "../../../src/utils/clientInfo.js";
 // Mock dependencies
 vi.mock("../../../src/utils/auth0ClientTelemetry.js");
 vi.mock("../../../src/utils/clientInfo.js");
-vi.mock("../../../src/Client.js", () => ({
-    Auth0MyAccountClient: class MockAuth0MyAccountClient {
+vi.mock("../../../src/Client.js", () => {
+    class MockMyAccountClient {
         constructor(public options: any) {}
-    },
-}));
+    }
+    return {
+        MyAccountClient: MockMyAccountClient,
+    };
+});
 
 const mockGenerateClientInfo = vi.mocked(generateClientInfo);
 const MockAuth0ClientTelemetry = vi.mocked(Auth0ClientTelemetry);

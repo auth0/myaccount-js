@@ -1,4 +1,4 @@
-import { Auth0MyAccountClient } from "../Client.js";
+import { MyAccountClient as FernClient } from "../Client.js";
 import { Auth0ClientTelemetry, type Auth0ClientTelemetryOptions } from "../utils/index.js";
 import * as core from "../core/index.js";
 import {
@@ -29,7 +29,7 @@ export declare namespace MyAccountClient {
      * @public
      */
     export interface MyAccountClientOptions
-        extends Omit<Auth0MyAccountClient.Options, "token" | "environment" | "baseUrl" | "fetcher"> {
+        extends Omit<FernClient.Options, "token" | "environment" | "baseUrl" | "fetcher"> {
         /** Auth0 domain (e.g., 'your-tenant.auth0.com') */
         domain: string;
         /**
@@ -190,7 +190,7 @@ export declare namespace MyAccountClient {
  * });
  * ```
  */
-export class MyAccountClient extends Auth0MyAccountClient {
+export class MyAccountClient extends FernClient {
     /**
      * Creates a new MyAccount API client instance.
      *
@@ -217,7 +217,7 @@ export class MyAccountClient extends Auth0MyAccountClient {
             headers,
             ...(fetcher && { fetcher }),
             ...(token !== undefined && { token }),
-        } as Auth0MyAccountClient.Options;
+        } as FernClient.Options;
 
         super(clientOptions);
     }

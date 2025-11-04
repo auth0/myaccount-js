@@ -1,58 +1,135 @@
-# Auth0 TypeScript Library
+![Auth0 MyAccount SDK for JavaScript/TypeScript](https://cdn.auth0.com/website/sdks/banners/myaccount-js-banner.png)
 
+![Release](https://img.shields.io/npm/v/@auth0/myaccount-js)
+[![License](https://img.shields.io/:license-mit-blue.svg?style=flat)](https://opensource.org/licenses/MIT)
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fauth0%2Fmyaccount-js)
-[![npm shield](https://img.shields.io/npm/v/my-account)](https://www.npmjs.com/package/my-account)
 
-The Auth0 TypeScript library provides convenient access to the Auth0 APIs from TypeScript.
+📚 [Documentation](#documentation) - 🚀 [Getting Started](#getting-started) - 💻 [API Reference](#api-reference) - 💬 [Feedback](#feedback)
 
-## Installation
+## Documentation
 
-```sh
-npm i -s my-account
+- [Docs Site](https://auth0.com/docs) - explore our docs site and learn more about Auth0
+- [API Reference](https://github.com/auth0/myaccount-js/blob/main/reference.md) - full reference for this library
+
+## Getting Started
+
+### Requirements
+
+This library supports the following tooling versions:
+
+- Node.js: `^20.19.0 || ^22.12.0 || ^24.0.0`
+
+### Installation
+
+Using [npm](https://npmjs.org) in your project directory run the following command:
+
+```bash
+npm install @auth0/myaccount-js
 ```
 
-## Reference
+### Configure the SDK
 
-A full reference for this library is available [here](https://github.com/auth0/myaccount-js/blob/HEAD/./reference.md).
+The MyAccount client allows end-users to manage their own Auth0 profile, authentication methods, and connected accounts.
 
-## Usage
-
-Instantiate and use the client with the following:
+Initialize your client with a domain and token supplier:
 
 ```typescript
-import { Auth0MyAccountClient } from "my-account";
+import { MyAccountClient } from "@auth0/myaccount-js";
 
-const client = new Auth0MyAccountClient({ token: "YOUR_TOKEN" });
-await client.authenticationMethods.create({
-    type: "passkey",
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    token: "YOUR_ACCESS_TOKEN", // or use a token supplier function
 });
 ```
 
-## Request And Response Types
+#### Using a Token Supplier
 
-The SDK exports all request and response types as TypeScript interfaces. Simply import them with the
-following namespace:
+For dynamic token retrieval (recommended for production):
 
 ```typescript
-import { Auth0MyAccount } from "my-account";
+import { MyAccountClient } from "@auth0/myaccount-js";
 
-const request: Auth0MyAccount.UpdateAuthenticationMethodRequestContent = {
-    ...
-};
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    token: async ({ authorizationParams }) => {
+        // Fetch token with required scopes
+        return await getAccessToken({
+            scope: `openid profile email ${authorizationParams.scope}`,
+        });
+    },
+});
 ```
+
+#### Using a Custom Fetcher
+
+For advanced authentication scenarios:
+
+```typescript
+import { MyAccountClient } from "@auth0/myaccount-js";
+
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    fetcher: async (url, init, authParams) => {
+        const token = await getAccessToken({ scope: authParams?.scope });
+        return fetch(url, {
+            ...init,
+            headers: {
+                ...init?.headers,
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    },
+});
+```
+
+## Request and Response Types
+
+The SDK exports all request and response types as TypeScript interfaces. You can import them directly:
+
+```typescript
+import { MyAccountClient, MyAccount } from "@auth0/myaccount-js";
+
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    token: "YOUR_ACCESS_TOKEN",
+});
+
+// Use the request type
+const request: MyAccount.UpdateAuthenticationMethodRequestContent = {
+    name: "My Security Key",
+};
+
+await client.authenticationMethods.update("auth_method_id", request);
+```
+
+## API Reference
+
+### Generated Documentation
+
+- [Full Reference](./reference.md) - complete API reference guide
+
+### Key Classes
+
+- **MyAccountClient** - for managing user profiles and authentication methods
 
 ## Exception Handling
 
-When the API returns a non-success status code (4xx or 5xx response), a subclass of the following error
-will be thrown.
+When the API returns a non-success status code (4xx or 5xx response), a subclass of the following error will be thrown:
 
 ```typescript
-import { Auth0MyAccountError } from "my-account";
+import { MyAccountClient, MyAccountError } from "@auth0/myaccount-js";
+
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    token: "YOUR_ACCESS_TOKEN",
+});
 
 try {
-    await client.authenticationMethods.create(...);
+    await client.authenticationMethods.create({
+        type: "passkey",
+    });
 } catch (err) {
-    if (err instanceof Auth0MyAccountError) {
+    if (err instanceof MyAccountError) {
         console.log(err.statusCode);
         console.log(err.message);
         console.log(err.body);
@@ -63,29 +140,28 @@ try {
 
 ## Pagination
 
-List endpoints are paginated. The SDK provides an iterator so that you can simply loop over the items:
+Some list endpoints are paginated. You can manually iterate page-by-page:
 
 ```typescript
-import { Auth0MyAccountClient } from "my-account";
+import { MyAccountClient } from "@auth0/myaccount-js";
 
-const client = new Auth0MyAccountClient({ token: "YOUR_TOKEN" });
-const response = await client.connectedAccounts.list({
-    connection: "connection",
-    from: "from",
-    take: 1,
+const client = new MyAccountClient({
+    domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
+    token: "YOUR_ACCESS_TOKEN",
 });
-for await (const item of response) {
-    console.log(item);
-}
 
-// Or you can manually iterate page-by-page
 let page = await client.connectedAccounts.list({
     connection: "connection",
-    from: "from",
-    take: 1,
+    take: 10,
 });
+
+// Process first page
+console.log(page.data);
+
+// Get next pages
 while (page.hasNextPage()) {
-    page = page.getNextPage();
+    page = await page.getNextPage();
+    console.log(page.data);
 }
 ```
 
@@ -93,33 +169,41 @@ while (page.hasNextPage()) {
 
 ### Additional Headers
 
-If you would like to send additional headers as part of the request, use the `headers` request option.
+If you would like to send additional headers as part of the request, use the `headers` request option:
 
 ```typescript
-const response = await client.authenticationMethods.create(..., {
-    headers: {
-        'X-Custom-Header': 'custom value'
-    }
-});
+const response = await client.authenticationMethods.create(
+    {
+        type: "passkey",
+    },
+    {
+        headers: {
+            "X-Custom-Header": "custom value",
+        },
+    },
+);
 ```
 
 ### Additional Query String Parameters
 
-If you would like to send additional query string parameters as part of the request, use the `queryParams` request option.
+If you would like to send additional query string parameters as part of the request, use the `queryParams` request option:
 
 ```typescript
-const response = await client.authenticationMethods.create(..., {
-    queryParams: {
-        'customQueryParamKey': 'custom query param value'
-    }
-});
+const response = await client.authenticationMethods.create(
+    {
+        type: "passkey",
+    },
+    {
+        queryParams: {
+            customQueryParamKey: "custom query param value",
+        },
+    },
+);
 ```
 
 ### Retries
 
-The SDK is instrumented with automatic retries with exponential backoff. A request will be retried as long
-as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
-retry limit (default: 2).
+The SDK is instrumented with automatic retries with exponential backoff. A request will be retried as long as the request is deemed retryable and the number of retry attempts has not grown larger than the configured retry limit (default: 2).
 
 A request is deemed retryable when any of the following HTTP status codes is returned:
 
@@ -127,79 +211,110 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 - [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
 - [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500) (Internal Server Errors)
 
-Use the `maxRetries` request option to configure this behavior.
+Use the `maxRetries` request option to configure this behavior:
 
 ```typescript
-const response = await client.authenticationMethods.create(..., {
-    maxRetries: 0 // override maxRetries at the request level
-});
+const response = await client.authenticationMethods.create(
+    {
+        type: "passkey",
+    },
+    {
+        maxRetries: 0, // override maxRetries at the request level
+    },
+);
 ```
 
 ### Timeouts
 
-The SDK defaults to a 60 second timeout. Use the `timeoutInSeconds` option to configure this behavior.
+The SDK defaults to a 60 second timeout. Use the `timeoutInSeconds` option to configure this behavior:
 
 ```typescript
-const response = await client.authenticationMethods.create(..., {
-    timeoutInSeconds: 30 // override timeout to 30s
-});
+const response = await client.authenticationMethods.create(
+    {
+        type: "passkey",
+    },
+    {
+        timeoutInSeconds: 30, // override timeout to 30s
+    },
+);
 ```
 
 ### Aborting Requests
 
-The SDK allows users to abort requests at any point by passing in an abort signal.
+The SDK allows users to abort requests at any point by passing in an abort signal:
 
 ```typescript
 const controller = new AbortController();
-const response = await client.authenticationMethods.create(..., {
-    abortSignal: controller.signal
-});
+const response = await client.authenticationMethods.create(
+    {
+        type: "passkey",
+    },
+    {
+        abortSignal: controller.signal,
+    },
+);
 controller.abort(); // aborts the request
 ```
 
 ### Access Raw Response Data
 
-The SDK provides access to raw response data, including headers, through the `.withRawResponse()` method.
-The `.withRawResponse()` method returns a promise that results to an object with a `data` and a `rawResponse` property.
+The SDK provides access to raw response data, including headers, through the `.withRawResponse()` method. The `.withRawResponse()` method returns a promise that results to an object with a `data` and a `rawResponse` property:
 
 ```typescript
-const { data, rawResponse } = await client.authenticationMethods.create(...).withRawResponse();
+const { data, rawResponse } = await client.authenticationMethods
+    .create({
+        type: "passkey",
+    })
+    .withRawResponse();
 
 console.log(data);
-console.log(rawResponse.headers['X-My-Header']);
+console.log(rawResponse.headers["X-My-Header"]);
 ```
 
 ### Runtime Compatibility
 
 The SDK works in the following runtimes:
 
-- Node.js 18+
+- Node.js 20.19.0+, 22.12.0+, 24+
 - Vercel
 - Cloudflare Workers
 - Deno v1.25+
 - Bun 1.0+
 - React Native
 
-### Customizing Fetch Client
+## Feedback
 
-The SDK provides a way for you to customize the underlying HTTP client / Fetch function. If you're running in an
-unsupported environment, this provides a way for you to break glass and ensure the SDK works.
+### Contributing
 
-```typescript
-import { Auth0MyAccountClient } from "my-account";
+We appreciate feedback and contribution to this repo! Before you get started, please see the following:
 
-const client = new Auth0MyAccountClient({
-    ...
-    fetcher: // provide your implementation here
-});
-```
+- [Auth0's general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md)
+- [Auth0's code of conduct guidelines](https://github.com/auth0/open-source-template/blob/master/CODE-OF-CONDUCT.md)
 
-## Contributing
-
-While we value open-source contributions to this SDK, this library is generated programmatically.
-Additions made directly to this library would have to be moved over to our generation code,
-otherwise they would be overwritten upon the next generated release. Feel free to open a PR as
-a proof of concept, but know that we will not be able to merge it as-is. We suggest opening
-an issue first to discuss with us!
+While we value open-source contributions to this SDK, this library is generated programmatically. Additions made directly to this library would have to be moved over to our generation code, otherwise they would be overwritten upon the next generated release. Feel free to open a PR as a proof of concept, but know that we will not be able to merge it as-is. We suggest opening an issue first to discuss with us!
 
 On the other hand, contributions to the README are always very welcome!
+
+### Raise an issue
+
+To provide feedback or report a bug, please [raise an issue on our issue tracker](https://github.com/auth0/myaccount-js/issues).
+
+### Vulnerability Reporting
+
+Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
+
+## What is Auth0?
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_dark_mode.png" width="150">
+    <source media="(prefers-color-scheme: light)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+    <img alt="Auth0 Logo" src="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+  </picture>
+</p>
+<p align="center">
+  Auth0 is an easy to implement, adaptable authentication and authorization platform. To learn more checkout <a href="https://auth0.com/why-auth0">Why Auth0?</a>
+</p>
+<p align="center">
+  This project is licensed under the MIT license. See the <a href="./LICENSE"> LICENSE</a> file for more info.
+</p>

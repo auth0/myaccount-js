@@ -89,7 +89,7 @@ module.exports = {
     hideGenerator: true,
     navigationLinks: {
         GitHub: "https://github.com/auth0/myaccount-js",
-        npm: "https://www.npmjs.com/package/my-account",
+        npm: "https://www.npmjs.com/package/@auth0/myaccount-js",
     },
     visibilityFilters: {
         protected: false,
