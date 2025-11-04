@@ -51,10 +51,10 @@ import { MyAccountClient } from "@auth0/myaccount-js";
 
 const client = new MyAccountClient({
     domain: "{YOUR_TENANT_AND_REGION}.auth0.com",
-    token: async ({ authorizationParams }) => {
+    token: async ({ scope }) => {
         // Fetch token with required scopes
         return await getAccessToken({
-            scope: `openid profile email ${authorizationParams.scope}`,
+            scope: `openid profile email ${scope}`,
         });
     },
 });

@@ -15,15 +15,9 @@ export namespace Auth0Token {
      */
     export interface TokenOptions {
         /**
-         * Authorization parameters including scopes required for the current API endpoint.
-         * Extracted from the endpoint's security requirements.
+         * Space-separated scopes required for the current API endpoint.
          */
-        authorizationParams: {
-            /**
-             * Space-separated scopes required for the current API endpoint.
-             */
-            scope: string;
-        };
+        scope: string;
     }
 
     /**
@@ -39,10 +33,10 @@ export namespace Auth0Token {
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
-     *   token: async ({ authorizationParams }) => {
+     *   token: async ({ scope }) => {
      *     const token = await auth0.getTokenSilently({
      *       authorizationParams: {
-     *         scope: `openid profile email ${authorizationParams.scope}`
+     *         scope: `openid profile email ${scope}`
      *       }
      *     });
      *     return token;
@@ -54,14 +48,14 @@ export namespace Auth0Token {
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
-     *   token: getAccessToken  // SDK automatically passes { authorizationParams: { scope: '...' } }
+     *   token: getAccessToken  // SDK automatically passes { scope: '...' }
      * });
      *
-     * // Your getAccessToken function receives authorization params automatically
-     * async function getAccessToken({ authorizationParams }) {
+     * // Your getAccessToken function receives scope automatically
+     * async function getAccessToken({ scope }) {
      *   return await yourTokenProvider.getToken({
      *     authorizationParams: {
-     *       scope: `openid profile email ${authorizationParams.scope}`
+     *       scope: `openid profile email ${scope}`
      *     }
      *   });
      * }
@@ -84,7 +78,7 @@ export namespace Auth0Token {
  *
  * - **String**: Static token (⚠️ not recommended for production)
  * - **Simple function**: `() => string` - For dynamic tokens without scope handling
- * - **Scope-aware function**: `({ authorizationParams }) => string` - **RECOMMENDED** for Auth0 applications
+ * - **Scope-aware function**: `({ scope }) => string` - **RECOMMENDED** for Auth0 applications
  *
  * @group MyAccount API
  * @public
@@ -102,10 +96,10 @@ export namespace Auth0Token {
  * @example Recommended: Automatic scope handling
  * ```typescript
  * // The SDK automatically calls your function with required scopes
- * const token: Auth0TokenSupplier = async ({ authorizationParams }) => {
+ * const token: Auth0TokenSupplier = async ({ scope }) => {
  *   const token = await auth0.getTokenSilently({
  *     authorizationParams: {
- *       scope: `openid profile email ${authorizationParams.scope}`
+ *       scope: `openid profile email ${scope}`
  *     }
  *   });
  *   return token;
@@ -143,9 +137,7 @@ export function createCoreTokenSupplier(tokenSupplier: Auth0TokenSupplier): core
             if (isTokenSupplierWithScopes(tokenSupplier)) {
                 const scopes = extractScopesFromMetadata(endpointMetadata);
                 const scope = scopes.join(" ");
-                return await tokenSupplier({
-                    authorizationParams: { scope },
-                });
+                return await tokenSupplier({ scope });
             }
             return await (tokenSupplier as Auth0Token.SimpleTokenSupplier)();
         };

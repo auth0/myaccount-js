@@ -38,8 +38,8 @@ describe("Token", () => {
         });
 
         it("should handle scope-aware token supplier with scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ authorizationParams }) => {
-                return `token-with-scope-${authorizationParams.scope}`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `token-with-scope-${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -59,8 +59,8 @@ describe("Token", () => {
         });
 
         it("should handle scope-aware token supplier with empty scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ authorizationParams }) => {
-                return `token-with-scope-${authorizationParams.scope}`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `token-with-scope-${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -76,8 +76,8 @@ describe("Token", () => {
         });
 
         it("should handle scope-aware token supplier with multiple security schemes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ authorizationParams }) => {
-                return `scope:${authorizationParams.scope}`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `scope:${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -104,8 +104,8 @@ describe("Token", () => {
         });
 
         it("should deduplicate scopes in scope-aware token supplier", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ authorizationParams }) => {
-                const scopeArray = authorizationParams.scope.split(" ");
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                const scopeArray = scope.split(" ");
                 return `count:${scopeArray.length}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
