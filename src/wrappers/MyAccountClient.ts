@@ -111,7 +111,7 @@ export declare namespace MyAccountClient {
          * Supports multiple patterns:
          * - **String**: Static access token
          * - **Simple function**: `() => string` - For dynamic tokens without scope handling
-         * - **Scope-aware function**: `({ authorizationParams }) => string` - **RECOMMENDED** for Auth0 applications
+         * - **Scope-aware function**: `({ scope }) => string` - **RECOMMENDED** for Auth0 applications
          *
          * The scope-aware function is ideal for Auth0 applications as the SDK automatically
          * calls your function with the required scopes (as a space-separated string) for each API endpoint.
