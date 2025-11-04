@@ -23,7 +23,7 @@ describe("MyAccountClient", () => {
 
         // Setup default mock for generateClientInfo
         mockGenerateClientInfo.mockReturnValue({
-            name: "node-auth0-myaccount",
+            name: "myaccount-js",
             version: "1.0.0",
             env: { node: "20.0.0" },
         });

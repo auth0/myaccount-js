@@ -32,7 +32,7 @@ describe("Auth0ClientTelemetry", () => {
         });
 
         it("should generate default client info when none provided", () => {
-            const defaultClientInfo = { name: "node-auth0-myaccount", version: "0.0.309" };
+            const defaultClientInfo = { name: "myaccount-js", version: "0.0.309" };
             mockGenerateClientInfo.mockReturnValue(defaultClientInfo);
 
             const telemetry = new Auth0ClientTelemetry({});
@@ -44,7 +44,7 @@ describe("Auth0ClientTelemetry", () => {
 
             // Decode and verify the header contains the mocked client info
             const decoded = decodeBase64UrlJson(header!);
-            expect(decoded.name).toBe("node-auth0-myaccount");
+            expect(decoded.name).toBe("myaccount-js");
             expect(decoded.version).toBe("0.0.309");
         });
     });
