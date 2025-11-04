@@ -40,7 +40,7 @@ export namespace Auth0Fetcher {
      *
      * @example Custom fetcher with Auth0 SDK
      * ```typescript
-     * const client = new MyOrgClient({
+     * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   fetcher: async (url, init, authParams) => {
      *     // Get token with required scopes
@@ -64,7 +64,7 @@ export namespace Auth0Fetcher {
      *
      * @example Custom fetcher with error handling
      * ```typescript
-     * const client = new MyOrgClient({
+     * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   fetcher: async (url, init, authParams) => {
      *     const token = await getToken(authParams);
@@ -99,7 +99,7 @@ export namespace Auth0Fetcher {
      * // Create Auth0 fetcher with DPoP support and automatic token handling
      * const auth0Fetcher = auth0.createFetcher();
      *
-     * const client = new MyOrgClient({
+     * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   fetcher: auth0Fetcher.fetch // Pass Auth0's fetch directly
      * });
@@ -113,7 +113,7 @@ export namespace Auth0Fetcher {
 }
 
 /**
- * Custom fetch function supplier for the MyOrg Client.
+ * Custom fetch function supplier for the MyAccountClient.
  * Allows users to provide a custom fetch implementation that receives authorization parameters.
  *
  * @group MyAccount API

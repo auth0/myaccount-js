@@ -1,5 +1,5 @@
 /**
- * Authentication utilities for MyOrg Client.
+ * Authentication utilities for MyAccountClient.
  *
  * @module Wrappers.Auth
  * @group MyAccount API

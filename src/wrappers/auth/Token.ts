@@ -1,7 +1,7 @@
 import * as core from "../../core/index.js";
 
 /**
- * Auth0 token options that can be used with the MyOrg Client.
+ * Auth0 token options that can be used with the MyAccountClient.
  * Provides a user-friendly interface for different token patterns.
  *
  * @group MyAccount API
@@ -37,7 +37,7 @@ export namespace Auth0Token {
      *
      * @example Auth0 SPA with automatic scope handling
      * ```typescript
-     * const client = new MyOrgClient({
+     * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   token: async ({ authorizationParams }) => {
      *     const token = await auth0.getTokenSilently({
@@ -52,7 +52,7 @@ export namespace Auth0Token {
      *
      * @example Custom getAccessToken function
      * ```typescript
-     * const client = new MyOrgClient({
+     * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   token: getAccessToken  // SDK automatically passes { authorizationParams: { scope: '...' } }
      * });
@@ -79,7 +79,7 @@ export namespace Auth0Token {
 }
 
 /**
- * Token configuration for the MyOrg Client.
+ * Token configuration for the MyAccountClient.
  * Supports multiple patterns for maximum flexibility:
  *
  * - **String**: Static token (⚠️ not recommended for production)
