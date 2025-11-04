@@ -12,4 +12,4 @@ export const FactorTypeEnum = {
     PushNotification: "push-notification",
     RecoveryCode: "recovery-code",
 } as const;
-export type FactorTypeEnum = (typeof FactorTypeEnum)[keyof typeof FactorTypeEnum];
+export type FactorTypeEnum = (typeof FactorTypeEnum)[keyof typeof FactorTypeEnum] | string;

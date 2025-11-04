@@ -4,16 +4,18 @@ import * as environments from "./environments.js";
 import * as core from "./core/index.js";
 
 export interface BaseClientOptions {
-    environment?: core.Supplier<environments.Auth0MyAccountEnvironment | string>;
+    environment?: core.Supplier<environments.MyAccountEnvironment | string>;
     /** Specify a custom URL to connect the client to. */
     baseUrl?: core.Supplier<string>;
-    token?: core.EndpointSupplier<core.BearerToken | undefined>;
+    token: core.EndpointSupplier<core.BearerToken>;
     /** Additional headers to include in requests. */
     headers?: Record<string, string | core.EndpointSupplier<string | null | undefined> | null | undefined>;
     /** The default maximum time to wait for a response in seconds. */
     timeoutInSeconds?: number;
     /** The default number of times to retry the request. Defaults to 2. */
     maxRetries?: number;
+    /** Provide a custom fetch implementation. Useful for platforms that don't have a built-in fetch or need a custom implementation. */
+    fetch?: typeof fetch;
     fetcher?: core.FetchFunction;
 }
 

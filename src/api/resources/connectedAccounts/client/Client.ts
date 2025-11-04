@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import * as environments from "../../../../environments.js";
 import * as core from "../../../../core/index.js";
-import * as Auth0MyAccount from "../../../index.js";
+import * as MyAccount from "../../../index.js";
 import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import * as errors from "../../../../errors/index.js";
 import { toJson } from "../../../../core/json.js";
@@ -19,7 +19,7 @@ export class ConnectedAccounts {
     protected readonly _options: ConnectedAccounts.Options;
     protected _connections: Connections | undefined;
 
-    constructor(_options: ConnectedAccounts.Options = {}) {
+    constructor(_options: ConnectedAccounts.Options) {
         this._options = _options;
     }
 
@@ -30,13 +30,13 @@ export class ConnectedAccounts {
     /**
      * Start an authorization flow to link the authenticated user's account with an external identity provider.
      *
-     * @param {Auth0MyAccount.CreateConnectedAccountsRequestContent} request
+     * @param {MyAccount.CreateConnectedAccountsRequestContent} request
      * @param {ConnectedAccounts.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.connectedAccounts.create({
@@ -45,17 +45,17 @@ export class ConnectedAccounts {
      *     })
      */
     public create(
-        request: Auth0MyAccount.CreateConnectedAccountsRequestContent,
+        request: MyAccount.CreateConnectedAccountsRequestContent,
         requestOptions?: ConnectedAccounts.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.CreateConnectedAccountsResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.CreateConnectedAccountsResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__create(request, requestOptions));
     }
 
     private async __create(
-        request: Auth0MyAccount.CreateConnectedAccountsRequestContent,
+        request: MyAccount.CreateConnectedAccountsRequestContent,
         requestOptions?: ConnectedAccounts.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.CreateConnectedAccountsResponseContent>> {
-        const _metadata: core.EndpointMetadata = { security: undefined };
+    ): Promise<core.WithRawResponse<MyAccount.CreateConnectedAccountsResponseContent>> {
+        const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["create:me:connected_accounts"] }] };
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             this._options?.headers,
             mergeOnlyDefinedHeaders({ Authorization: await this._getAuthorizationHeader(_metadata) }),
@@ -65,7 +65,7 @@ export class ConnectedAccounts {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
+                    environments.MyAccountEnvironment.Default,
                 "connected-accounts/connect",
             ),
             method: "POST",
@@ -78,10 +78,11 @@ export class ConnectedAccounts {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.CreateConnectedAccountsResponseContent,
+                data: _response.body as MyAccount.CreateConnectedAccountsResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -89,27 +90,27 @@ export class ConnectedAccounts {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -119,17 +120,17 @@ export class ConnectedAccounts {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling POST /connected-accounts/connect.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -139,13 +140,13 @@ export class ConnectedAccounts {
     /**
      * Complete a previously started authorization flow to link the authenticated user's account with an external identity provider.
      *
-     * @param {Auth0MyAccount.CompleteConnectedAccountsRequestContent} request
+     * @param {MyAccount.CompleteConnectedAccountsRequestContent} request
      * @param {ConnectedAccounts.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.connectedAccounts.complete({
@@ -155,17 +156,17 @@ export class ConnectedAccounts {
      *     })
      */
     public complete(
-        request: Auth0MyAccount.CompleteConnectedAccountsRequestContent,
+        request: MyAccount.CompleteConnectedAccountsRequestContent,
         requestOptions?: ConnectedAccounts.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.CompleteConnectedAccountsResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.CompleteConnectedAccountsResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__complete(request, requestOptions));
     }
 
     private async __complete(
-        request: Auth0MyAccount.CompleteConnectedAccountsRequestContent,
+        request: MyAccount.CompleteConnectedAccountsRequestContent,
         requestOptions?: ConnectedAccounts.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.CompleteConnectedAccountsResponseContent>> {
-        const _metadata: core.EndpointMetadata = { security: undefined };
+    ): Promise<core.WithRawResponse<MyAccount.CompleteConnectedAccountsResponseContent>> {
+        const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["create:me:connected_accounts"] }] };
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             this._options?.headers,
             mergeOnlyDefinedHeaders({ Authorization: await this._getAuthorizationHeader(_metadata) }),
@@ -175,7 +176,7 @@ export class ConnectedAccounts {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
+                    environments.MyAccountEnvironment.Default,
                 "connected-accounts/complete",
             ),
             method: "POST",
@@ -188,10 +189,11 @@ export class ConnectedAccounts {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.CompleteConnectedAccountsResponseContent,
+                data: _response.body as MyAccount.CompleteConnectedAccountsResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -199,27 +201,27 @@ export class ConnectedAccounts {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -229,17 +231,17 @@ export class ConnectedAccounts {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling POST /connected-accounts/complete.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -249,13 +251,13 @@ export class ConnectedAccounts {
     /**
      * Retrieve connected accounts belonging to the authenticated user.
      *
-     * @param {Auth0MyAccount.ListConnectedAccountsRequestParameters} request
+     * @param {MyAccount.ListConnectedAccountsRequestParameters} request
      * @param {ConnectedAccounts.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.connectedAccounts.list({
@@ -265,15 +267,15 @@ export class ConnectedAccounts {
      *     })
      */
     public async list(
-        request: Auth0MyAccount.ListConnectedAccountsRequestParameters = {},
+        request: MyAccount.ListConnectedAccountsRequestParameters = {},
         requestOptions?: ConnectedAccounts.RequestOptions,
-    ): Promise<core.Page<Auth0MyAccount.ConnectedAccount>> {
+    ): Promise<core.Page<MyAccount.ConnectedAccount, MyAccount.ListConnectedAccountsResponseContent>> {
         const list = core.HttpResponsePromise.interceptFunction(
             async (
-                request: Auth0MyAccount.ListConnectedAccountsRequestParameters,
-            ): Promise<core.WithRawResponse<Auth0MyAccount.ListConnectedAccountsResponseContent>> => {
+                request: MyAccount.ListConnectedAccountsRequestParameters,
+            ): Promise<core.WithRawResponse<MyAccount.ListConnectedAccountsResponseContent>> => {
                 const _metadata: core.EndpointMetadata = {
-                    security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }],
+                    security: [{ "Bearer-DPoP": ["read:me:connected_accounts"] }],
                 };
                 const { connection, from: from_, take = 10 } = request;
                 const _queryParams: Record<string, string | string[] | object | object[] | null> = {};
@@ -295,7 +297,7 @@ export class ConnectedAccounts {
                     url: core.url.join(
                         (await core.Supplier.get(this._options.baseUrl)) ??
                             (await core.Supplier.get(this._options.environment)) ??
-                            environments.Auth0MyAccountEnvironment.Default,
+                            environments.MyAccountEnvironment.Default,
                         "connected-accounts/accounts",
                     ),
                     method: "GET",
@@ -305,37 +307,38 @@ export class ConnectedAccounts {
                     maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
                     abortSignal: requestOptions?.abortSignal,
                     endpointMetadata: _metadata,
+                    fetchFn: this._options?.fetch,
                 });
                 if (_response.ok) {
                     return {
-                        data: _response.body as Auth0MyAccount.ListConnectedAccountsResponseContent,
+                        data: _response.body as MyAccount.ListConnectedAccountsResponseContent,
                         rawResponse: _response.rawResponse,
                     };
                 }
                 if (_response.error.reason === "status-code") {
                     switch (_response.error.statusCode) {
                         case 400:
-                            throw new Auth0MyAccount.BadRequestError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.BadRequestError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 401:
-                            throw new Auth0MyAccount.UnauthorizedError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.UnauthorizedError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 403:
-                            throw new Auth0MyAccount.ForbiddenError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.ForbiddenError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 429:
-                            throw new Auth0MyAccount.TooManyRequestsError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.TooManyRequestsError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         default:
-                            throw new errors.Auth0MyAccountError({
+                            throw new errors.MyAccountError({
                                 statusCode: _response.error.statusCode,
                                 body: _response.error.body,
                                 rawResponse: _response.rawResponse,
@@ -344,17 +347,17 @@ export class ConnectedAccounts {
                 }
                 switch (_response.error.reason) {
                     case "non-json":
-                        throw new errors.Auth0MyAccountError({
+                        throw new errors.MyAccountError({
                             statusCode: _response.error.statusCode,
                             body: _response.error.rawBody,
                             rawResponse: _response.rawResponse,
                         });
                     case "timeout":
-                        throw new errors.Auth0MyAccountTimeoutError(
+                        throw new errors.MyAccountTimeoutError(
                             "Timeout exceeded when calling GET /connected-accounts/accounts.",
                         );
                     case "unknown":
-                        throw new errors.Auth0MyAccountError({
+                        throw new errors.MyAccountError({
                             message: _response.error.errorMessage,
                             rawResponse: _response.rawResponse,
                         });
@@ -362,7 +365,7 @@ export class ConnectedAccounts {
             },
         );
         const dataWithRawResponse = await list(request).withRawResponse();
-        return new core.Pageable<Auth0MyAccount.ListConnectedAccountsResponseContent, Auth0MyAccount.ConnectedAccount>({
+        return new core.Page<MyAccount.ConnectedAccount, MyAccount.ListConnectedAccountsResponseContent>({
             response: dataWithRawResponse.data,
             rawResponse: dataWithRawResponse.rawResponse,
             hasNextPage: (response) =>
@@ -377,26 +380,26 @@ export class ConnectedAccounts {
     /**
      * Delete a connected account belonging to the authenticated user.
      *
-     * @param {Auth0MyAccount.ConnectedAccountId} id - The unique identifier of the connected account
+     * @param {MyAccount.ConnectedAccountId} id - The unique identifier of the connected account
      * @param {ConnectedAccounts.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.connectedAccounts.delete("id")
      */
     public delete(
-        id: Auth0MyAccount.ConnectedAccountId,
+        id: MyAccount.ConnectedAccountId,
         requestOptions?: ConnectedAccounts.RequestOptions,
     ): core.HttpResponsePromise<void> {
         return core.HttpResponsePromise.fromPromise(this.__delete(id, requestOptions));
     }
 
     private async __delete(
-        id: Auth0MyAccount.ConnectedAccountId,
+        id: MyAccount.ConnectedAccountId,
         requestOptions?: ConnectedAccounts.RequestOptions,
     ): Promise<core.WithRawResponse<void>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["delete:me:connected_accounts"] }] };
@@ -409,8 +412,8 @@ export class ConnectedAccounts {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
-                `connected-accounts/accounts/${encodeURIComponent(id)}`,
+                    environments.MyAccountEnvironment.Default,
+                `connected-accounts/accounts/${core.url.encodePathParam(id)}`,
             ),
             method: "DELETE",
             headers: _headers,
@@ -419,6 +422,7 @@ export class ConnectedAccounts {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return { data: undefined, rawResponse: _response.rawResponse };
@@ -427,27 +431,27 @@ export class ConnectedAccounts {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -457,29 +461,24 @@ export class ConnectedAccounts {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling DELETE /connected-accounts/accounts/{id}.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
         }
     }
 
-    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string | undefined> {
-        const bearer = await core.EndpointSupplier.get(this._options.token, { endpointMetadata });
-        if (bearer != null) {
-            return `Bearer ${bearer}`;
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string> {
+        return `Bearer ${await core.EndpointSupplier.get(this._options.token, { endpointMetadata })}`;
     }
 }

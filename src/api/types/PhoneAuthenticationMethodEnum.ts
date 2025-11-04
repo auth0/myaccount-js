@@ -6,4 +6,5 @@ export const PhoneAuthenticationMethodEnum = {
     Voice: "voice",
 } as const;
 export type PhoneAuthenticationMethodEnum =
-    (typeof PhoneAuthenticationMethodEnum)[keyof typeof PhoneAuthenticationMethodEnum];
+    | (typeof PhoneAuthenticationMethodEnum)[keyof typeof PhoneAuthenticationMethodEnum]
+    | string;
