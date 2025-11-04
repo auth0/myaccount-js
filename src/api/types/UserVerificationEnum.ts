@@ -6,4 +6,4 @@ export const UserVerificationEnum = {
     Preferred: "preferred",
     Discouraged: "discouraged",
 } as const;
-export type UserVerificationEnum = (typeof UserVerificationEnum)[keyof typeof UserVerificationEnum];
+export type UserVerificationEnum = (typeof UserVerificationEnum)[keyof typeof UserVerificationEnum] | string;

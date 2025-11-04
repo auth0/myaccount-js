@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import * as environments from "../../../../environments.js";
 import * as core from "../../../../core/index.js";
-import * as Auth0MyAccount from "../../../index.js";
+import * as MyAccount from "../../../index.js";
 import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import * as errors from "../../../../errors/index.js";
 
@@ -16,7 +16,7 @@ export declare namespace AuthenticationMethods {
 export class AuthenticationMethods {
     protected readonly _options: AuthenticationMethods.Options;
 
-    constructor(_options: AuthenticationMethods.Options = {}) {
+    constructor(_options: AuthenticationMethods.Options) {
         this._options = _options;
     }
 
@@ -25,23 +25,23 @@ export class AuthenticationMethods {
      *
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.list()
      */
     public list(
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.ListAuthenticationMethodsResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.ListAuthenticationMethodsResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__list(requestOptions));
     }
 
     private async __list(
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.ListAuthenticationMethodsResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.ListAuthenticationMethodsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }] };
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             this._options?.headers,
@@ -52,7 +52,7 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
+                    environments.MyAccountEnvironment.Default,
                 "authentication-methods",
             ),
             method: "GET",
@@ -62,10 +62,11 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.ListAuthenticationMethodsResponseContent,
+                data: _response.body as MyAccount.ListAuthenticationMethodsResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -73,27 +74,27 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -103,17 +104,15 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
-                    "Timeout exceeded when calling GET /authentication-methods.",
-                );
+                throw new errors.MyAccountTimeoutError("Timeout exceeded when calling GET /authentication-methods.");
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -123,13 +122,13 @@ export class AuthenticationMethods {
     /**
      * Start the enrollment of a supported authentication method.
      *
-     * @param {Auth0MyAccount.CreateAuthenticationMethodRequestContent} request
+     * @param {MyAccount.CreateAuthenticationMethodRequestContent} request
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.create({
@@ -137,16 +136,16 @@ export class AuthenticationMethods {
      *     })
      */
     public create(
-        request: Auth0MyAccount.CreateAuthenticationMethodRequestContent,
+        request: MyAccount.CreateAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.CreateAuthenticationMethodResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.CreateAuthenticationMethodResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__create(request, requestOptions));
     }
 
     private async __create(
-        request: Auth0MyAccount.CreateAuthenticationMethodRequestContent,
+        request: MyAccount.CreateAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.CreateAuthenticationMethodResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.CreateAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["create:me:authentication_methods"] }],
         };
@@ -159,7 +158,7 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
+                    environments.MyAccountEnvironment.Default,
                 "authentication-methods",
             ),
             method: "POST",
@@ -172,10 +171,11 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.CreateAuthenticationMethodResponseContent,
+                data: _response.body as MyAccount.CreateAuthenticationMethodResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -183,27 +183,27 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -213,17 +213,15 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
-                    "Timeout exceeded when calling POST /authentication-methods.",
-                );
+                throw new errors.MyAccountTimeoutError("Timeout exceeded when calling POST /authentication-methods.");
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -233,29 +231,29 @@ export class AuthenticationMethods {
     /**
      * Retrieves a single authentication method belonging to the authenticated user.
      *
-     * @param {Auth0MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.NotFoundError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.NotFoundError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.get("authentication_method_id")
      */
     public get(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.GetAuthenticationMethodResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.GetAuthenticationMethodResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__get(authenticationMethodId, requestOptions));
     }
 
     private async __get(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.GetAuthenticationMethodResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.GetAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }] };
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             this._options?.headers,
@@ -266,8 +264,8 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
-                `authentication-methods/${encodeURIComponent(authenticationMethodId)}`,
+                    environments.MyAccountEnvironment.Default,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "GET",
             headers: _headers,
@@ -276,10 +274,11 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.GetAuthenticationMethodResponseContent,
+                data: _response.body as MyAccount.GetAuthenticationMethodResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -287,32 +286,32 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 404:
-                    throw new Auth0MyAccount.NotFoundError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.NotFoundError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -322,17 +321,17 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling GET /authentication-methods/{authentication_method_id}.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -342,26 +341,26 @@ export class AuthenticationMethods {
     /**
      * Deletes a single authentication method belonging to the authenticated user.
      *
-     * @param {Auth0MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.delete("authentication_method_id")
      */
     public delete(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
         requestOptions?: AuthenticationMethods.RequestOptions,
     ): core.HttpResponsePromise<void> {
         return core.HttpResponsePromise.fromPromise(this.__delete(authenticationMethodId, requestOptions));
     }
 
     private async __delete(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
         requestOptions?: AuthenticationMethods.RequestOptions,
     ): Promise<core.WithRawResponse<void>> {
         const _metadata: core.EndpointMetadata = {
@@ -376,8 +375,8 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
-                `authentication-methods/${encodeURIComponent(authenticationMethodId)}`,
+                    environments.MyAccountEnvironment.Default,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "DELETE",
             headers: _headers,
@@ -386,6 +385,7 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return { data: undefined, rawResponse: _response.rawResponse };
@@ -394,27 +394,27 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -424,17 +424,17 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling DELETE /authentication-methods/{authentication_method_id}.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -444,31 +444,31 @@ export class AuthenticationMethods {
     /**
      * Updates a single authentication method
      *
-     * @param {Auth0MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
-     * @param {Auth0MyAccount.UpdateAuthenticationMethodRequestContent} request
+     * @param {MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.UpdateAuthenticationMethodRequestContent} request
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.update("authentication_method_id")
      */
     public update(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
-        request: Auth0MyAccount.UpdateAuthenticationMethodRequestContent = {},
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.UpdateAuthenticationMethodRequestContent = {},
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.UpdateAuthenticationMethodResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.UpdateAuthenticationMethodResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__update(authenticationMethodId, request, requestOptions));
     }
 
     private async __update(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
-        request: Auth0MyAccount.UpdateAuthenticationMethodRequestContent = {},
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.UpdateAuthenticationMethodRequestContent = {},
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.UpdateAuthenticationMethodResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.UpdateAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["update:me:authentication_methods"] }],
         };
@@ -481,8 +481,8 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
-                `authentication-methods/${encodeURIComponent(authenticationMethodId)}`,
+                    environments.MyAccountEnvironment.Default,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "PATCH",
             headers: _headers,
@@ -494,10 +494,11 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.UpdateAuthenticationMethodResponseContent,
+                data: _response.body as MyAccount.UpdateAuthenticationMethodResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -505,27 +506,27 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -535,17 +536,17 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling PATCH /authentication-methods/{authentication_method_id}.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
@@ -555,14 +556,14 @@ export class AuthenticationMethods {
     /**
      * Confirm the enrollment of a supported authentication method.
      *
-     * @param {Auth0MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
-     * @param {Auth0MyAccount.VerifyAuthenticationMethodRequestContent} request
+     * @param {MyAccount.PathAuthenticationMethodId} authenticationMethodId - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.VerifyAuthenticationMethodRequestContent} request
      * @param {AuthenticationMethods.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.authenticationMethods.verify("authentication_method_id", {
@@ -579,18 +580,18 @@ export class AuthenticationMethods {
      *     })
      */
     public verify(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
-        request: Auth0MyAccount.VerifyAuthenticationMethodRequestContent,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.VerifyAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.VerifyAuthenticationMethodResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.VerifyAuthenticationMethodResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__verify(authenticationMethodId, request, requestOptions));
     }
 
     private async __verify(
-        authenticationMethodId: Auth0MyAccount.PathAuthenticationMethodId,
-        request: Auth0MyAccount.VerifyAuthenticationMethodRequestContent,
+        authenticationMethodId: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.VerifyAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethods.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.VerifyAuthenticationMethodResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.VerifyAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["create:me:authentication_methods"] }],
         };
@@ -603,8 +604,8 @@ export class AuthenticationMethods {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
-                `authentication-methods/${encodeURIComponent(authenticationMethodId)}/verify`,
+                    environments.MyAccountEnvironment.Default,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}/verify`,
             ),
             method: "POST",
             headers: _headers,
@@ -616,10 +617,11 @@ export class AuthenticationMethods {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
             return {
-                data: _response.body as Auth0MyAccount.VerifyAuthenticationMethodResponseContent,
+                data: _response.body as MyAccount.VerifyAuthenticationMethodResponseContent,
                 rawResponse: _response.rawResponse,
             };
         }
@@ -627,27 +629,27 @@ export class AuthenticationMethods {
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -657,29 +659,24 @@ export class AuthenticationMethods {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError(
+                throw new errors.MyAccountTimeoutError(
                     "Timeout exceeded when calling POST /authentication-methods/{authentication_method_id}/verify.",
                 );
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
         }
     }
 
-    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string | undefined> {
-        const bearer = await core.EndpointSupplier.get(this._options.token, { endpointMetadata });
-        if (bearer != null) {
-            return `Bearer ${bearer}`;
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string> {
+        return `Bearer ${await core.EndpointSupplier.get(this._options.token, { endpointMetadata })}`;
     }
 }

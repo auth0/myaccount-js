@@ -7,19 +7,19 @@ import { Factors } from "./api/resources/factors/client/Client.js";
 import { AuthenticationMethods } from "./api/resources/authenticationMethods/client/Client.js";
 import { ConnectedAccounts } from "./api/resources/connectedAccounts/client/Client.js";
 
-export declare namespace Auth0MyAccountClient {
+export declare namespace MyAccountClient {
     export interface Options extends BaseClientOptions {}
 
     export interface RequestOptions extends BaseRequestOptions {}
 }
 
-export class Auth0MyAccountClient {
-    protected readonly _options: Auth0MyAccountClient.Options;
+export class MyAccountClient {
+    protected readonly _options: MyAccountClient.Options;
     protected _factors: Factors | undefined;
     protected _authenticationMethods: AuthenticationMethods | undefined;
     protected _connectedAccounts: ConnectedAccounts | undefined;
 
-    constructor(_options: Auth0MyAccountClient.Options = {}) {
+    constructor(_options: MyAccountClient.Options) {
         this._options = _options;
     }
 

@@ -14,7 +14,7 @@ describe("Client Info", () => {
         it("should generate client info with SDK version", () => {
             const clientInfo = generateClientInfo();
 
-            expect(clientInfo.name).toBe("node-auth0-myaccount");
+            expect(clientInfo.name).toBe("myaccount-js");
             expect(clientInfo.version).toBe(SDK_VERSION);
         });
 

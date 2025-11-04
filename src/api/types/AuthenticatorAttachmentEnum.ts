@@ -6,4 +6,5 @@ export const AuthenticatorAttachmentEnum = {
     CrossPlatform: "cross-platform",
 } as const;
 export type AuthenticatorAttachmentEnum =
-    (typeof AuthenticatorAttachmentEnum)[keyof typeof AuthenticatorAttachmentEnum];
+    | (typeof AuthenticatorAttachmentEnum)[keyof typeof AuthenticatorAttachmentEnum]
+    | string;

@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../../../BaseClient.js";
 import * as environments from "../../../../../../environments.js";
 import * as core from "../../../../../../core/index.js";
-import * as Auth0MyAccount from "../../../../../index.js";
+import * as MyAccount from "../../../../../index.js";
 import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../../../core/headers.js";
 import * as errors from "../../../../../../errors/index.js";
 
@@ -16,20 +16,20 @@ export declare namespace Connections {
 export class Connections {
     protected readonly _options: Connections.Options;
 
-    constructor(_options: Connections.Options = {}) {
+    constructor(_options: Connections.Options) {
         this._options = _options;
     }
 
     /**
      * Retrieve available connections that can be used for account linking by the authenticated user.
      *
-     * @param {Auth0MyAccount.ListConnectedAccountsConnectionsRequestParameters} request
+     * @param {MyAccount.ListConnectedAccountsConnectionsRequestParameters} request
      * @param {Connections.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.connectedAccounts.connections.list({
@@ -38,13 +38,15 @@ export class Connections {
      *     })
      */
     public async list(
-        request: Auth0MyAccount.ListConnectedAccountsConnectionsRequestParameters = {},
+        request: MyAccount.ListConnectedAccountsConnectionsRequestParameters = {},
         requestOptions?: Connections.RequestOptions,
-    ): Promise<core.Page<Auth0MyAccount.ConnectedAccountConnection>> {
+    ): Promise<
+        core.Page<MyAccount.ConnectedAccountConnection, MyAccount.ListConnectedAccountsConnectionsResponseContent>
+    > {
         const list = core.HttpResponsePromise.interceptFunction(
             async (
-                request: Auth0MyAccount.ListConnectedAccountsConnectionsRequestParameters,
-            ): Promise<core.WithRawResponse<Auth0MyAccount.ListConnectedAccountsConnectionsResponseContent>> => {
+                request: MyAccount.ListConnectedAccountsConnectionsRequestParameters,
+            ): Promise<core.WithRawResponse<MyAccount.ListConnectedAccountsConnectionsResponseContent>> => {
                 const _metadata: core.EndpointMetadata = {
                     security: [{ "Bearer-DPoP": ["read:me:connected_accounts"] }],
                 };
@@ -65,7 +67,7 @@ export class Connections {
                     url: core.url.join(
                         (await core.Supplier.get(this._options.baseUrl)) ??
                             (await core.Supplier.get(this._options.environment)) ??
-                            environments.Auth0MyAccountEnvironment.Default,
+                            environments.MyAccountEnvironment.Default,
                         "connected-accounts/connections",
                     ),
                     method: "GET",
@@ -75,37 +77,38 @@ export class Connections {
                     maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
                     abortSignal: requestOptions?.abortSignal,
                     endpointMetadata: _metadata,
+                    fetchFn: this._options?.fetch,
                 });
                 if (_response.ok) {
                     return {
-                        data: _response.body as Auth0MyAccount.ListConnectedAccountsConnectionsResponseContent,
+                        data: _response.body as MyAccount.ListConnectedAccountsConnectionsResponseContent,
                         rawResponse: _response.rawResponse,
                     };
                 }
                 if (_response.error.reason === "status-code") {
                     switch (_response.error.statusCode) {
                         case 400:
-                            throw new Auth0MyAccount.BadRequestError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.BadRequestError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 401:
-                            throw new Auth0MyAccount.UnauthorizedError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.UnauthorizedError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 403:
-                            throw new Auth0MyAccount.ForbiddenError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.ForbiddenError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         case 429:
-                            throw new Auth0MyAccount.TooManyRequestsError(
-                                _response.error.body as Auth0MyAccount.ErrorResponse,
+                            throw new MyAccount.TooManyRequestsError(
+                                _response.error.body as MyAccount.ErrorResponse,
                                 _response.rawResponse,
                             );
                         default:
-                            throw new errors.Auth0MyAccountError({
+                            throw new errors.MyAccountError({
                                 statusCode: _response.error.statusCode,
                                 body: _response.error.body,
                                 rawResponse: _response.rawResponse,
@@ -114,17 +117,17 @@ export class Connections {
                 }
                 switch (_response.error.reason) {
                     case "non-json":
-                        throw new errors.Auth0MyAccountError({
+                        throw new errors.MyAccountError({
                             statusCode: _response.error.statusCode,
                             body: _response.error.rawBody,
                             rawResponse: _response.rawResponse,
                         });
                     case "timeout":
-                        throw new errors.Auth0MyAccountTimeoutError(
+                        throw new errors.MyAccountTimeoutError(
                             "Timeout exceeded when calling GET /connected-accounts/connections.",
                         );
                     case "unknown":
-                        throw new errors.Auth0MyAccountError({
+                        throw new errors.MyAccountError({
                             message: _response.error.errorMessage,
                             rawResponse: _response.rawResponse,
                         });
@@ -132,9 +135,9 @@ export class Connections {
             },
         );
         const dataWithRawResponse = await list(request).withRawResponse();
-        return new core.Pageable<
-            Auth0MyAccount.ListConnectedAccountsConnectionsResponseContent,
-            Auth0MyAccount.ConnectedAccountConnection
+        return new core.Page<
+            MyAccount.ConnectedAccountConnection,
+            MyAccount.ListConnectedAccountsConnectionsResponseContent
         >({
             response: dataWithRawResponse.data,
             rawResponse: dataWithRawResponse.rawResponse,
@@ -147,12 +150,7 @@ export class Connections {
         });
     }
 
-    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string | undefined> {
-        const bearer = await core.EndpointSupplier.get(this._options.token, { endpointMetadata });
-        if (bearer != null) {
-            return `Bearer ${bearer}`;
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string> {
+        return `Bearer ${await core.EndpointSupplier.get(this._options.token, { endpointMetadata })}`;
     }
 }

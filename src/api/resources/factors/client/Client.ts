@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import * as environments from "../../../../environments.js";
 import * as core from "../../../../core/index.js";
-import * as Auth0MyAccount from "../../../index.js";
+import * as MyAccount from "../../../index.js";
 import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import * as errors from "../../../../errors/index.js";
 
@@ -19,7 +19,7 @@ export declare namespace Factors {
 export class Factors {
     protected readonly _options: Factors.Options;
 
-    constructor(_options: Factors.Options = {}) {
+    constructor(_options: Factors.Options) {
         this._options = _options;
     }
 
@@ -28,23 +28,23 @@ export class Factors {
      *
      * @param {Factors.RequestOptions} requestOptions - Request-specific configuration.
      *
-     * @throws {@link Auth0MyAccount.BadRequestError}
-     * @throws {@link Auth0MyAccount.UnauthorizedError}
-     * @throws {@link Auth0MyAccount.ForbiddenError}
-     * @throws {@link Auth0MyAccount.TooManyRequestsError}
+     * @throws {@link MyAccount.BadRequestError}
+     * @throws {@link MyAccount.UnauthorizedError}
+     * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
      *     await client.factors.list()
      */
     public list(
         requestOptions?: Factors.RequestOptions,
-    ): core.HttpResponsePromise<Auth0MyAccount.ListFactorsResponseContent> {
+    ): core.HttpResponsePromise<MyAccount.ListFactorsResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__list(requestOptions));
     }
 
     private async __list(
         requestOptions?: Factors.RequestOptions,
-    ): Promise<core.WithRawResponse<Auth0MyAccount.ListFactorsResponseContent>> {
+    ): Promise<core.WithRawResponse<MyAccount.ListFactorsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:factors"] }] };
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             this._options?.headers,
@@ -55,7 +55,7 @@ export class Factors {
             url: core.url.join(
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
-                    environments.Auth0MyAccountEnvironment.Default,
+                    environments.MyAccountEnvironment.Default,
                 "factors",
             ),
             method: "GET",
@@ -65,38 +65,36 @@ export class Factors {
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
             endpointMetadata: _metadata,
+            fetchFn: this._options?.fetch,
         });
         if (_response.ok) {
-            return {
-                data: _response.body as Auth0MyAccount.ListFactorsResponseContent,
-                rawResponse: _response.rawResponse,
-            };
+            return { data: _response.body as MyAccount.ListFactorsResponseContent, rawResponse: _response.rawResponse };
         }
 
         if (_response.error.reason === "status-code") {
             switch (_response.error.statusCode) {
                 case 400:
-                    throw new Auth0MyAccount.BadRequestError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.BadRequestError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 401:
-                    throw new Auth0MyAccount.UnauthorizedError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.UnauthorizedError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 403:
-                    throw new Auth0MyAccount.ForbiddenError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 case 429:
-                    throw new Auth0MyAccount.TooManyRequestsError(
-                        _response.error.body as Auth0MyAccount.ErrorResponse,
+                    throw new MyAccount.TooManyRequestsError(
+                        _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
                 default:
-                    throw new errors.Auth0MyAccountError({
+                    throw new errors.MyAccountError({
                         statusCode: _response.error.statusCode,
                         body: _response.error.body,
                         rawResponse: _response.rawResponse,
@@ -106,27 +104,22 @@ export class Factors {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                     rawResponse: _response.rawResponse,
                 });
             case "timeout":
-                throw new errors.Auth0MyAccountTimeoutError("Timeout exceeded when calling GET /factors.");
+                throw new errors.MyAccountTimeoutError("Timeout exceeded when calling GET /factors.");
             case "unknown":
-                throw new errors.Auth0MyAccountError({
+                throw new errors.MyAccountError({
                     message: _response.error.errorMessage,
                     rawResponse: _response.rawResponse,
                 });
         }
     }
 
-    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string | undefined> {
-        const bearer = await core.EndpointSupplier.get(this._options.token, { endpointMetadata });
-        if (bearer != null) {
-            return `Bearer ${bearer}`;
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader(endpointMetadata: core.EndpointMetadata): Promise<string> {
+        return `Bearer ${await core.EndpointSupplier.get(this._options.token, { endpointMetadata })}`;
     }
 }

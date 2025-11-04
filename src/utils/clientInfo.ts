@@ -21,7 +21,7 @@ export function generateClientInfo(): ClientInfo {
     const runtimeVersion = RUNTIME?.version ?? "unknown";
 
     return {
-        name: "node-auth0-myaccount",
+        name: "myaccount-js",
         version: SDK_VERSION,
         env: {
             [runtimeKey]: runtimeVersion,
