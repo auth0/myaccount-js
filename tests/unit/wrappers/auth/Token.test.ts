@@ -38,8 +38,8 @@ describe("Token", () => {
         });
 
         it("should handle scope-aware token supplier with scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
-                return `token-with-scope-${scope}`;
+            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
+                return authParams ? `token-with-scope-${authParams.scope}` : `token-without-scope`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -58,9 +58,9 @@ describe("Token", () => {
             expect(result).toBe("token-with-scope-read:users write:users");
         });
 
-        it("should handle scope-aware token supplier with empty scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
-                return `token-with-scope-${scope}`;
+        it("should handle token supplier with empty scopes", async () => {
+            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
+                return authParams ? `token-without-scope-${authParams.scope}` : `token-without-scope`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -72,12 +72,12 @@ describe("Token", () => {
                 endpointMetadata,
             });
 
-            expect(result).toBe("token-with-scope-");
+            expect(result).toBe("token-without-scope");
         });
 
         it("should handle scope-aware token supplier with multiple security schemes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
-                return `scope:${scope}`;
+            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
+                return authParams ? `scope:${authParams.scope}` : `token-without-scope`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -104,9 +104,8 @@ describe("Token", () => {
         });
 
         it("should deduplicate scopes in scope-aware token supplier", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
-                const scopeArray = scope.split(" ");
-                return `count:${scopeArray.length}`;
+            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
+                return authParams ? `count:${authParams.scope.split(" ").length}` : `token-without-scope`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
