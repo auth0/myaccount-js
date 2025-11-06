@@ -21,37 +21,38 @@ export namespace Auth0Token {
     }
 
     /**
-     * Function that automatically receives required scopes for the API call.
-     * This is the recommended pattern for Auth0 applications.
+     * Token supplier function that can optionally receive scope information for the API call.
      *
      * The SDK automatically calls your function with the scopes needed for each endpoint.
+     * You can choose to use the scopes or ignore them based on your needs.
      *
-     * @param options - Object containing the required scopes
-     * @returns Access token string
+     * @param options - Optional object containing the required scopes
+     * @returns Access token string or a Promise that resolves to a token
      *
-     * @example Auth0 SPA with automatic scope handling
+     * @example Recommended: Scope-aware token (Auth0 SPA)
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   token: async ({ scope }) => {
-     *     const token = await auth0.getTokenSilently({
+     *     return await auth0.getTokenSilently({
      *       authorizationParams: {
      *         scope: `openid profile email ${scope}`
      *       }
      *     });
-     *     return token;
      *   }
      * });
      * ```
      *
-     * @example Custom getAccessToken function
+     * @example Simple token without scope handling
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
-     *   token: getAccessToken  // SDK automatically passes { scope: '...' }
+     *   token: () => getCurrentToken()  // Ignores scope parameter
      * });
+     * ```
      *
-     * // Your getAccessToken function receives scope automatically
+     * @example Custom function with scope support
+     * ```typescript
      * async function getAccessToken({ scope }) {
      *   return await yourTokenProvider.getToken({
      *     authorizationParams: {
@@ -59,17 +60,14 @@ export namespace Auth0Token {
      *     }
      *   });
      * }
+     *
+     * const client = new MyAccountClient({
+     *   domain: 'your-tenant.auth0.com',
+     *   token: getAccessToken  // SDK automatically passes { scope: '...' }
+     * });
      * ```
      */
-    export type TokenSupplierWithScopes = (options: TokenOptions) => string | Promise<string>;
-
-    /**
-     * Simple function that returns a token without scope information.
-     * Use this when you have a single token that works for all endpoints.
-     *
-     * @returns Access token string
-     */
-    export type SimpleTokenSupplier = () => string | Promise<string>;
+    export type TokenSupplier = (options?: TokenOptions) => Promise<string> | string;
 }
 
 /**
@@ -77,8 +75,10 @@ export namespace Auth0Token {
  * Supports multiple patterns for maximum flexibility:
  *
  * - **String**: Static token (⚠️ not recommended for production)
- * - **Simple function**: `() => string` - For dynamic tokens without scope handling
- * - **Scope-aware function**: `({ scope }) => string` - **RECOMMENDED** for Auth0 applications
+ * - **Function**: `(options?) => string` - Token supplier that optionally uses scope information
+ *
+ * The function pattern supports both simple token suppliers that ignore scopes
+ * and scope-aware suppliers that use the scopes provided by the SDK.
  *
  * @group MyAccount API
  * @public
@@ -88,40 +88,27 @@ export namespace Auth0Token {
  * const token: Auth0TokenSupplier = 'your-static-access-token';
  * ```
  *
- * @example Simple dynamic token
+ * @example Simple token supplier (ignores scopes)
  * ```typescript
  * const token: Auth0TokenSupplier = () => getCurrentToken();
  * ```
  *
- * @example Recommended: Automatic scope handling
+ * @example Recommended: Scope-aware token supplier
  * ```typescript
- * // The SDK automatically calls your function with required scopes
  * const token: Auth0TokenSupplier = async ({ scope }) => {
- *   const token = await auth0.getTokenSilently({
+ *   return await auth0.getTokenSilently({
  *     authorizationParams: {
  *       scope: `openid profile email ${scope}`
  *     }
  *   });
- *   return token;
  * };
  * ```
  */
-export type Auth0TokenSupplier = string | Auth0Token.SimpleTokenSupplier | Auth0Token.TokenSupplierWithScopes;
-
-/**
- * Type guard to check if a function is a TokenSupplierWithScopes.
- *
- * @internal
- */
-function isTokenSupplierWithScopes(
-    fn: Auth0Token.SimpleTokenSupplier | Auth0Token.TokenSupplierWithScopes,
-): fn is Auth0Token.TokenSupplierWithScopes {
-    return fn.length > 0;
-}
-
+export type Auth0TokenSupplier = string | Auth0Token.TokenSupplier;
 /**
  * Converts an Auth0TokenSupplier to the core EndpointSupplier format.
- * Handles scope extraction from endpoint metadata.
+ * Handles scope extraction from endpoint metadata and calls the token supplier
+ * with scopes when available.
  *
  * @param tokenSupplier - The user-provided token configuration
  * @returns A core-compatible EndpointSupplier
@@ -134,12 +121,13 @@ export function createCoreTokenSupplier(tokenSupplier: Auth0TokenSupplier): core
 
     if (typeof tokenSupplier === "function") {
         return async ({ endpointMetadata }) => {
-            if (isTokenSupplierWithScopes(tokenSupplier)) {
-                const scopes = extractScopesFromMetadata(endpointMetadata);
-                const scope = scopes.join(" ");
+            const scopes = extractScopesFromMetadata(endpointMetadata);
+            const scope = scopes.join(" ");
+            // Call the supplier with scope if available, otherwise without arguments
+            if (scope) {
                 return await tokenSupplier({ scope });
             }
-            return await (tokenSupplier as Auth0Token.SimpleTokenSupplier)();
+            return await tokenSupplier();
         };
     }
 
