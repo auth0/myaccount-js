@@ -140,8 +140,8 @@ describe("MyAccountClient", () => {
             });
 
             it("should accept scope-aware token supplier", () => {
-                const tokenSupplier = async ({ authorizationParams }: any) => {
-                    return `token-with-scope-${authorizationParams.scope}`;
+                const tokenSupplier = async ({ scope }: any) => {
+                    return `token-with-scope-${scope}`;
                 };
                 const client = new MyAccountClient({
                     domain: "tenant.auth0.com",
@@ -350,10 +350,10 @@ describe("MyAccountClient", () => {
         it("should create client for SPA with Auth0 SDK integration", () => {
             const mockAuth0GetToken = vi.fn().mockResolvedValue("spa-token");
 
-            const tokenSupplier = async ({ authorizationParams }: any) => {
+            const tokenSupplier = async ({ scope }: any) => {
                 return mockAuth0GetToken({
                     authorizationParams: {
-                        scope: `openid profile email ${authorizationParams.scope}`,
+                        scope: `openid profile email ${scope}`,
                     },
                 });
             };
@@ -476,10 +476,10 @@ describe("MyAccountClient", () => {
 
             const client = new MyAccountClient({
                 domain: "tenant.auth0.com",
-                token: async ({ authorizationParams }) => {
+                token: async ({ scope }) => {
                     return mockGetTokenSilently({
                         authorizationParams: {
-                            scope: `openid profile email ${authorizationParams.scope}`,
+                            scope: `openid profile email ${scope}`,
                         },
                     });
                 },

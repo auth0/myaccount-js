@@ -75,11 +75,11 @@ export declare namespace MyAccountClient {
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
-     *   token: async ({ authorizationParams }) => {
+     *   token: async ({ scope }) => {
      *     // SDK automatically passes required scopes for each API call
      *     return await auth0.getTokenSilently({
      *       authorizationParams: {
-     *         scope: `openid profile email ${authorizationParams.scope}`
+     *         scope: `openid profile email ${scope}`
      *       }
      *     });
      *   }
@@ -88,16 +88,16 @@ export declare namespace MyAccountClient {
      *
      * @example Pass your function directly
      * ```typescript
-     * // Your getAccessToken function receives { authorizationParams: { scope: '...' } } automatically
+     * // Your getAccessToken function receives { scope: '...' } automatically
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
      *   token: getAccessToken  // SDK calls with required scopes
      * });
      *
-     * async function getAccessToken({ authorizationParams }) {
+     * async function getAccessToken({ scope }) {
      *   return await auth0.getTokenSilently({
      *     authorizationParams: {
-     *       scope: `openid profile email ${authorizationParams.scope}`
+     *       scope: `openid profile email ${scope}`
      *     }
      *   });
      * }
@@ -111,7 +111,7 @@ export declare namespace MyAccountClient {
          * Supports multiple patterns:
          * - **String**: Static access token
          * - **Simple function**: `() => string` - For dynamic tokens without scope handling
-         * - **Scope-aware function**: `({ authorizationParams }) => string` - **RECOMMENDED** for Auth0 applications
+         * - **Scope-aware function**: `({ scope }) => string` - **RECOMMENDED** for Auth0 applications
          *
          * The scope-aware function is ideal for Auth0 applications as the SDK automatically
          * calls your function with the required scopes (as a space-separated string) for each API endpoint.

@@ -17,11 +17,11 @@ const client = new MyAccountClient({
 // Example 2: With dynamic token (recommended for production)
 const clientWithDynamicToken = new MyAccountClient({
     domain: "your-tenant.auth0.com",
-    token: async ({ authorizationParams }) => {
+    token: async ({ scope }) => {
         // SDK automatically provides required scopes
         // You can pass them to your Auth0 SDK
-        const scope = `openid profile email ${authorizationParams.scope}`;
-        return await getToken(scope);
+        const fullScope = `openid profile email ${scope}`;
+        return await getToken(fullScope);
     },
 });
 
