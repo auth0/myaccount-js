@@ -3,8 +3,6 @@
 import type { BaseClientOptions, BaseRequestOptions } from "./BaseClient.js";
 import * as environments from "./environments.js";
 import * as core from "./core/index.js";
-import { Factors } from "./api/resources/factors/client/Client.js";
-import { AuthenticationMethods } from "./api/resources/authenticationMethods/client/Client.js";
 import { ConnectedAccounts } from "./api/resources/connectedAccounts/client/Client.js";
 
 export declare namespace MyAccountClient {
@@ -15,20 +13,10 @@ export declare namespace MyAccountClient {
 
 export class MyAccountClient {
     protected readonly _options: MyAccountClient.Options;
-    protected _factors: Factors | undefined;
-    protected _authenticationMethods: AuthenticationMethods | undefined;
     protected _connectedAccounts: ConnectedAccounts | undefined;
 
     constructor(_options: MyAccountClient.Options) {
         this._options = _options;
-    }
-
-    public get factors(): Factors {
-        return (this._factors ??= new Factors(this._options));
-    }
-
-    public get authenticationMethods(): AuthenticationMethods {
-        return (this._authenticationMethods ??= new AuthenticationMethods(this._options));
     }
 
     public get connectedAccounts(): ConnectedAccounts {

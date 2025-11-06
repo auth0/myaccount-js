@@ -4,17 +4,6 @@ import * as MyAccount from "../index.js";
 
 /**
  * @example
- *     {}
- */
-export interface UpdateAuthenticationMethodRequestContent {
-    /** The friendly name of the authentication method */
-    name?: string;
-    /** The preferred authentication method (for phone authenticators) */
-    preferred_authentication_method?: MyAccount.PhoneAuthenticationMethodEnum;
-}
-
-/**
- * @example
  *     {
  *         connection: "connection",
  *         redirect_uri: "redirect_uri"
@@ -51,35 +40,4 @@ export interface CompleteConnectedAccountsRequestContent {
     redirect_uri: string;
     /** The PKCE code verifier */
     code_verifier?: string;
-}
-
-/**
- * @example
- *     {
- *         connection: "connection",
- *         from: "from",
- *         take: 1
- *     }
- */
-export interface ListConnectedAccountsRequestParameters {
-    /** Filter connected accounts by connection names */
-    connection?: MyAccount.ConnectionNamesFilter | null;
-    /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
-    /** Number of results to return (1-20) */
-    take?: number | null;
-}
-
-/**
- * @example
- *     {
- *         from: "from",
- *         take: 1
- *     }
- */
-export interface ListConnectedAccountsConnectionsRequestParameters {
-    /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
-    /** Number of results to return (1-20) */
-    take?: number | null;
 }
