@@ -68,7 +68,7 @@ export namespace Auth0Token {
      * });
      * ```
      */
-    export type TokenSupplier = (options: TokenOptions) => Promise<string> | string;
+    export type TokenSupplier = (options?: TokenOptions) => string | Promise<string>;
 }
 
 /**
@@ -125,7 +125,11 @@ export function createCoreTokenSupplier(tokenSupplier: Auth0TokenSupplier): core
         return async ({ endpointMetadata }) => {
             const scopes = extractScopesFromMetadata(endpointMetadata);
             const scope = scopes.join(" ");
-            return await tokenSupplier({ scope });
+
+            if (scope) {
+                return await tokenSupplier({ scope });
+            }
+            return await tokenSupplier();
         };
     }
 
