@@ -21,12 +21,13 @@ export namespace Auth0Token {
     }
 
     /**
-     * Token supplier function that can optionally receive scope information for the API call.
+     * Token supplier function that receives scope information for each API call.
      *
-     * The SDK automatically calls your function with the scopes needed for each endpoint.
-     * You can choose to use the scopes or ignore them based on your needs.
+     * The SDK automatically calls your function with an object containing the scopes
+     * required for the current endpoint. You can destructure the `scope` parameter
+     * to use it, or ignore the parameter entirely if you have a static token.
      *
-     * @param options - Optional object containing the required scopes
+     * @param options - Object containing the required scopes (always provided by SDK)
      * @returns Access token string or a Promise that resolves to a token
      *
      * @example Recommended: Scope-aware token (Auth0 SPA)
@@ -47,7 +48,7 @@ export namespace Auth0Token {
      * ```typescript
      * const client = new MyAccountClient({
      *   domain: 'your-tenant.auth0.com',
-     *   token: () => getCurrentToken()  // Ignores scope parameter
+     *   token: () => getCurrentToken()  // Parameter ignored, works fine
      * });
      * ```
      *
@@ -67,7 +68,7 @@ export namespace Auth0Token {
      * });
      * ```
      */
-    export type TokenSupplier = (options?: TokenOptions) => Promise<string> | string;
+    export type TokenSupplier = (options: TokenOptions) => Promise<string> | string;
 }
 
 /**
@@ -75,10 +76,11 @@ export namespace Auth0Token {
  * Supports multiple patterns for maximum flexibility:
  *
  * - **String**: Static token (⚠️ not recommended for production)
- * - **Function**: `(options?) => string` - Token supplier that optionally uses scope information
+ * - **Function**: `(options) => string` - Token supplier that receives scope information
  *
- * The function pattern supports both simple token suppliers that ignore scopes
- * and scope-aware suppliers that use the scopes provided by the SDK.
+ * The SDK always calls the function with a scope object. You can destructure it
+ * to use the scopes, or define your function with no parameters to ignore it.
+ * JavaScript allows functions to ignore extra arguments, making both patterns work.
  *
  * @group MyAccount API
  * @public
@@ -107,8 +109,8 @@ export namespace Auth0Token {
 export type Auth0TokenSupplier = string | Auth0Token.TokenSupplier;
 /**
  * Converts an Auth0TokenSupplier to the core EndpointSupplier format.
- * Handles scope extraction from endpoint metadata and calls the token supplier
- * with scopes when available.
+ * Handles scope extraction from endpoint metadata and always calls the token
+ * supplier with the scope object.
  *
  * @param tokenSupplier - The user-provided token configuration
  * @returns A core-compatible EndpointSupplier
@@ -123,11 +125,7 @@ export function createCoreTokenSupplier(tokenSupplier: Auth0TokenSupplier): core
         return async ({ endpointMetadata }) => {
             const scopes = extractScopesFromMetadata(endpointMetadata);
             const scope = scopes.join(" ");
-            // Call the supplier with scope if available, otherwise without arguments
-            if (scope) {
-                return await tokenSupplier({ scope });
-            }
-            return await tokenSupplier();
+            return await tokenSupplier({ scope });
         };
     }
 
