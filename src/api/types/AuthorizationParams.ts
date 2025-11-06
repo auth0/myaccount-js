@@ -22,7 +22,6 @@ export interface AuthorizationParams {
     prompt?: MyAccount.PromptEnum;
     /** Suggests the preferred languages for the user interface, passed as a space-separated list of BCP47 language tags (e.g., 'en', 'es', 'fr'). */
     ui_locales?: string;
-    access_type?: MyAccount.GoogleAccessTypeEnum;
-    /** Defines the permissions the client requests from the IdP. Must include standard scopes to identify the user (e.g. 'openid', 'email', 'profile'), scopes required to obtain refresh tokens (e.g. 'offline_access'), and any custom scopes the client needs to access protected resources. */
+    /** Defines the set of permissions the client is requesting. Must include 'openid' for OIDC, and may include 'profile', 'email', 'address', 'offline_access', or custom scopes. */
     scope?: string;
 }
