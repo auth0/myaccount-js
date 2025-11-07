@@ -5,6 +5,4 @@ import * as MyAccount from "../index.js";
 export interface AuthenticationMethodMfaBase extends MyAccount.AuthenticationMethodBase {
     /** The authentication method status */
     confirmed: boolean;
-    /** The date and time when the authentication method was last used */
-    last_auth_at?: string;
 }

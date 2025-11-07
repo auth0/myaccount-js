@@ -7,4 +7,4 @@ export const PromptEnum = {
     Consent: "consent",
     SelectAccount: "select_account",
 } as const;
-export type PromptEnum = (typeof PromptEnum)[keyof typeof PromptEnum] | string;
+export type PromptEnum = (typeof PromptEnum)[keyof typeof PromptEnum];

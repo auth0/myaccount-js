@@ -27,6 +27,8 @@ export interface CreateConnectedAccountsRequestContent {
     redirect_uri: string;
     /** An opaque value used to maintain state between the request and callback. */
     state?: string;
+    /** A string value used to associate a Client session with an ID Token, and to mitigate replay attacks. */
+    nonce?: string;
     /** The PKCE code challenge derived from the code verifier. */
     code_challenge?: string;
     /** The method used to derive the code challenge. Required when code_challenge is provided. */
@@ -51,35 +53,4 @@ export interface CompleteConnectedAccountsRequestContent {
     redirect_uri: string;
     /** The PKCE code verifier */
     code_verifier?: string;
-}
-
-/**
- * @example
- *     {
- *         connection: "connection",
- *         from: "from",
- *         take: 1
- *     }
- */
-export interface ListConnectedAccountsRequestParameters {
-    /** Filter connected accounts by connection names */
-    connection?: MyAccount.ConnectionNamesFilter | null;
-    /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
-    /** Number of results to return (1-20) */
-    take?: number | null;
-}
-
-/**
- * @example
- *     {
- *         from: "from",
- *         take: 1
- *     }
- */
-export interface ListConnectedAccountsConnectionsRequestParameters {
-    /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
-    /** Number of results to return (1-20) */
-    take?: number | null;
 }

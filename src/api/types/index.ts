@@ -63,7 +63,6 @@ export * from "./VerifyAuthenticationMethodRequestContent.js";
 export * from "./VerifyAuthenticationMethodResponseContent.js";
 export * from "./DisplayEnum.js";
 export * from "./PromptEnum.js";
-export * from "./GoogleAccessTypeEnum.js";
 export * from "./AuthorizationParams.js";
 export * from "./ConnectParams.js";
 export * from "./CreateConnectedAccountsResponseContent.js";
