@@ -75,6 +75,22 @@
         "node": ">=18.0.0"
     },
     "sideEffects": false,
+    "description": "Auth0 SDK for JavaScript/TypeScript to manage user accounts, profiles, sessions, and authentication settings",
+    "author": "Auth0",
+    "homepage": "https://github.com/auth0/myaccount-js#readme",
+    "keywords": [
+        "auth0",
+        "myaccount",
+        "authentication",
+        "authorization",
+        "api",
+        "sdk",
+        "typescript",
+        "javascript"
+    ],
+    "bugs": {
+        "url": "https://github.com/auth0/myaccount-js/issues"
+    },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [
             "eslint --fix",
