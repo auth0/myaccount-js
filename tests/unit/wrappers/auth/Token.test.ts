@@ -15,11 +15,12 @@ describe("Token", () => {
         });
 
         it("should handle simple function token supplier", async () => {
+            // Function has no parameters, so SDK's { scope } argument is ignored by JavaScript
             const tokenSupplier: Auth0TokenSupplier = () => "dynamic-token";
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
             // Call the supplier with empty endpoint metadata
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata: { security: [] },
             });
 
@@ -30,7 +31,7 @@ describe("Token", () => {
             const tokenSupplier: Auth0TokenSupplier = async () => "async-token";
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata: { security: [] },
             });
 
@@ -38,8 +39,8 @@ describe("Token", () => {
         });
 
         it("should handle scope-aware token supplier with scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
-                return authParams ? `token-with-scope-${authParams.scope}` : `token-without-scope`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `token-with-scope-${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -51,7 +52,7 @@ describe("Token", () => {
                 ],
             };
 
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata,
             });
 
@@ -59,8 +60,8 @@ describe("Token", () => {
         });
 
         it("should handle token supplier with empty scopes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
-                return authParams ? `token-without-scope-${authParams.scope}` : `token-without-scope`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `token-without-scope-${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -68,16 +69,16 @@ describe("Token", () => {
                 security: [],
             };
 
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata,
             });
 
-            expect(result).toBe("token-without-scope");
+            expect(result).toBe("token-without-scope-");
         });
 
         it("should handle scope-aware token supplier with multiple security schemes", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
-                return authParams ? `scope:${authParams.scope}` : `token-without-scope`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                return `scope:${scope}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -93,7 +94,7 @@ describe("Token", () => {
                 ],
             };
 
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata,
             });
 
@@ -104,8 +105,10 @@ describe("Token", () => {
         });
 
         it("should deduplicate scopes in scope-aware token supplier", async () => {
-            const tokenSupplier: Auth0TokenSupplier = async (authParams) => {
-                return authParams ? `count:${authParams.scope.split(" ").length}` : `token-without-scope`;
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                // Note: This works because scope will never be empty in this test
+                // For empty scopes, see "should handle empty scope string edge case" test
+                return `count:${scope.split(" ").length}`;
             };
             const coreSupplier = createCoreTokenSupplier(tokenSupplier);
 
@@ -120,7 +123,7 @@ describe("Token", () => {
                 ],
             };
 
-            const result = await core.EndpointSupplier.get(coreSupplier as core.EndpointSupplier<string>, {
+            const result = await core.EndpointSupplier.get(coreSupplier, {
                 endpointMetadata,
             });
 
@@ -156,6 +159,22 @@ describe("Token", () => {
             const invalidSupplier = [] as any;
 
             expect(() => createCoreTokenSupplier(invalidSupplier)).toThrow("Invalid token supplier provided");
+        });
+
+        it("should handle empty scope string edge case", async () => {
+            // Note: "".split(" ") returns [""], not []
+            // Token suppliers should handle this gracefully
+            const tokenSupplier: Auth0TokenSupplier = async ({ scope }) => {
+                const parts = scope ? scope.split(" ").filter((s) => s.length > 0) : [];
+                return `count:${parts.length}`;
+            };
+            const coreSupplier = createCoreTokenSupplier(tokenSupplier);
+
+            const result = await core.EndpointSupplier.get(coreSupplier, {
+                endpointMetadata: { security: [] },
+            });
+
+            expect(result).toBe("count:0");
         });
     });
 
