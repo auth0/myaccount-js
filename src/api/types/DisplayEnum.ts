@@ -7,4 +7,4 @@ export const DisplayEnum = {
     Touch: "touch",
     Wap: "wap",
 } as const;
-export type DisplayEnum = (typeof DisplayEnum)[keyof typeof DisplayEnum] | string;
+export type DisplayEnum = (typeof DisplayEnum)[keyof typeof DisplayEnum];

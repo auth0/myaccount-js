@@ -5,6 +5,4 @@ export const CredentialDeviceTypeEnum = {
     MultiDevice: "multi_device",
     SingleDevice: "single_device",
 } as const;
-export type CredentialDeviceTypeEnum =
-    | (typeof CredentialDeviceTypeEnum)[keyof typeof CredentialDeviceTypeEnum]
-    | string;
+export type CredentialDeviceTypeEnum = (typeof CredentialDeviceTypeEnum)[keyof typeof CredentialDeviceTypeEnum];

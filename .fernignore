@@ -30,6 +30,7 @@ typedoc.config.js
 .version
 .github/
 README.md
+CONTRIBUTING.md
 
 # ESLint configuration
 
