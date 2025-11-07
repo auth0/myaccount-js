@@ -365,10 +365,10 @@ packages:
             }
         engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
 
-    "@gerrit0/mini-shiki@3.14.0":
+    "@gerrit0/mini-shiki@3.15.0":
         resolution:
             {
-                integrity: sha512-c5X8fwPLOtUS8TVdqhynz9iV0GlOtFUT1ppXYzUUlEXe4kbZ/mvMT8wXoT8kCwUka+zsiloq7sD3pZ3+QVTuNQ==,
+                integrity: sha512-L5IHdZIDa4bG4yJaOzfasOH/o22MCesY0mx+n6VATbaiCtMeR59pdRqYk4bEiQkIHfxsHPNgdi7VJlZb2FhdMQ==,
             }
 
     "@humanfs/core@0.19.1":
@@ -709,28 +709,28 @@ packages:
         cpu: [x64]
         os: [win32]
 
-    "@shikijs/engine-oniguruma@3.14.0":
+    "@shikijs/engine-oniguruma@3.15.0":
         resolution:
             {
-                integrity: sha512-TNcYTYMbJyy+ZjzWtt0bG5y4YyMIWC2nyePz+CFMWqm+HnZZyy9SWMgo8Z6KBJVIZnx8XUXS8U2afO6Y0g1Oug==,
+                integrity: sha512-HnqFsV11skAHvOArMZdLBZZApRSYS4LSztk2K3016Y9VCyZISnlYUYsL2hzlS7tPqKHvNqmI5JSUJZprXloMvA==,
             }
 
-    "@shikijs/langs@3.14.0":
+    "@shikijs/langs@3.15.0":
         resolution:
             {
-                integrity: sha512-DIB2EQY7yPX1/ZH7lMcwrK5pl+ZkP/xoSpUzg9YC8R+evRCCiSQ7yyrvEyBsMnfZq4eBzLzBlugMyTAf13+pzg==,
+                integrity: sha512-WpRvEFvkVvO65uKYW4Rzxs+IG0gToyM8SARQMtGGsH4GDMNZrr60qdggXrFOsdfOVssG/QQGEl3FnJ3EZ+8w8A==,
             }
 
-    "@shikijs/themes@3.14.0":
+    "@shikijs/themes@3.15.0":
         resolution:
             {
-                integrity: sha512-fAo/OnfWckNmv4uBoUu6dSlkcBc+SA1xzj5oUSaz5z3KqHtEbUypg/9xxgJARtM6+7RVm0Q6Xnty41xA1ma1IA==,
+                integrity: sha512-8ow2zWb1IDvCKjYb0KiLNrK4offFdkfNVPXb1OZykpLCzRU6j+efkY+Y7VQjNlNFXonSw+4AOdGYtmqykDbRiQ==,
             }
 
-    "@shikijs/types@3.14.0":
+    "@shikijs/types@3.15.0":
         resolution:
             {
-                integrity: sha512-bQGgC6vrY8U/9ObG1Z/vTro+uclbjjD/uG58RvfxKZVD5p9Yc1ka3tVyEFy7BNJLzxuWyHH5NWynP9zZZS59eQ==,
+                integrity: sha512-BnP+y/EQnhihgHy4oIAN+6FFtmfTekwOLsQbRw9hOKwqgNy8Bdsjq8B05oAt/ZgvIWWFrshV71ytOrlPfYjIJw==,
             }
 
     "@shikijs/vscode-textmate@10.0.2":
@@ -2974,12 +2974,12 @@ snapshots:
             "@eslint/core": 0.17.0
             levn: 0.4.1
 
-    "@gerrit0/mini-shiki@3.14.0":
+    "@gerrit0/mini-shiki@3.15.0":
         dependencies:
-            "@shikijs/engine-oniguruma": 3.14.0
-            "@shikijs/langs": 3.14.0
-            "@shikijs/themes": 3.14.0
-            "@shikijs/types": 3.14.0
+            "@shikijs/engine-oniguruma": 3.15.0
+            "@shikijs/langs": 3.15.0
+            "@shikijs/themes": 3.15.0
+            "@shikijs/types": 3.15.0
             "@shikijs/vscode-textmate": 10.0.2
 
     "@humanfs/core@0.19.1": {}
@@ -3138,20 +3138,20 @@ snapshots:
     "@rollup/rollup-win32-x64-msvc@4.52.5":
         optional: true
 
-    "@shikijs/engine-oniguruma@3.14.0":
+    "@shikijs/engine-oniguruma@3.15.0":
         dependencies:
-            "@shikijs/types": 3.14.0
+            "@shikijs/types": 3.15.0
             "@shikijs/vscode-textmate": 10.0.2
 
-    "@shikijs/langs@3.14.0":
+    "@shikijs/langs@3.15.0":
         dependencies:
-            "@shikijs/types": 3.14.0
+            "@shikijs/types": 3.15.0
 
-    "@shikijs/themes@3.14.0":
+    "@shikijs/themes@3.15.0":
         dependencies:
-            "@shikijs/types": 3.14.0
+            "@shikijs/types": 3.15.0
 
-    "@shikijs/types@3.14.0":
+    "@shikijs/types@3.15.0":
         dependencies:
             "@shikijs/vscode-textmate": 10.0.2
             "@types/hast": 3.0.4
@@ -4240,7 +4240,7 @@ snapshots:
 
     typedoc@0.28.14(typescript@5.7.3):
         dependencies:
-            "@gerrit0/mini-shiki": 3.14.0
+            "@gerrit0/mini-shiki": 3.15.0
             lunr: 2.3.9
             markdown-it: 14.1.0
             minimatch: 9.0.5

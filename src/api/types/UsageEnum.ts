@@ -5,4 +5,4 @@ export const UsageEnum = {
     Primary: "primary",
     Secondary: "secondary",
 } as const;
-export type UsageEnum = (typeof UsageEnum)[keyof typeof UsageEnum] | string;
+export type UsageEnum = (typeof UsageEnum)[keyof typeof UsageEnum];
