@@ -13,5 +13,7 @@ export interface ConnectedAccount {
     /** ISO 8601 timestamp when the connected account was created. */
     created_at: string;
     /** ISO 8601 timestamp when the connected account expires. */
-    expires_at?: string;
+    expires_at?: string | undefined;
+    /** The organization ID this connected account is scoped to. Only present for accounts bound to an organization. */
+    org_id?: string | undefined;
 }

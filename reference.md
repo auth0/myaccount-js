@@ -46,7 +46,7 @@ await client.factors.list();
 <dl>
 <dd>
 
-**requestOptions:** `Factors.RequestOptions`
+**requestOptions:** `FactorsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -103,7 +103,7 @@ await client.authenticationMethods.list();
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -142,9 +142,7 @@ Start the enrollment of a supported authentication method.
 <dd>
 
 ```typescript
-await client.authenticationMethods.create({
-    type: "passkey",
-});
+await client.authenticationMethods.create({});
 ```
 
 </dd>
@@ -168,7 +166,7 @@ await client.authenticationMethods.create({
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -179,7 +177,7 @@ await client.authenticationMethods.create({
 </dl>
 </details>
 
-<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">get</a>(authenticationMethodId) -> MyAccount.GetAuthenticationMethodResponseContent</code></summary>
+<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">get</a>(authentication_method_id) -> MyAccount.GetAuthenticationMethodResponseContent</code></summary>
 <dl>
 <dd>
 
@@ -223,7 +221,7 @@ await client.authenticationMethods.get("authentication_method_id");
 <dl>
 <dd>
 
-**authenticationMethodId:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+**authentication_method_id:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
 
 </dd>
 </dl>
@@ -231,7 +229,7 @@ await client.authenticationMethods.get("authentication_method_id");
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -242,7 +240,7 @@ await client.authenticationMethods.get("authentication_method_id");
 </dl>
 </details>
 
-<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">delete</a>(authenticationMethodId) -> void</code></summary>
+<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">delete</a>(authentication_method_id) -> void</code></summary>
 <dl>
 <dd>
 
@@ -286,7 +284,7 @@ await client.authenticationMethods.delete("authentication_method_id");
 <dl>
 <dd>
 
-**authenticationMethodId:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+**authentication_method_id:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
 
 </dd>
 </dl>
@@ -294,7 +292,7 @@ await client.authenticationMethods.delete("authentication_method_id");
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -305,7 +303,7 @@ await client.authenticationMethods.delete("authentication_method_id");
 </dl>
 </details>
 
-<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">update</a>(authenticationMethodId, { ...params }) -> MyAccount.UpdateAuthenticationMethodResponseContent</code></summary>
+<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">update</a>(authentication_method_id, { ...params }) -> MyAccount.UpdateAuthenticationMethodResponseContent</code></summary>
 <dl>
 <dd>
 
@@ -349,7 +347,7 @@ await client.authenticationMethods.update("authentication_method_id");
 <dl>
 <dd>
 
-**authenticationMethodId:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+**authentication_method_id:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
 
 </dd>
 </dl>
@@ -365,7 +363,7 @@ await client.authenticationMethods.update("authentication_method_id");
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -376,7 +374,7 @@ await client.authenticationMethods.update("authentication_method_id");
 </dl>
 </details>
 
-<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">verify</a>(authenticationMethodId, { ...params }) -> MyAccount.VerifyAuthenticationMethodResponseContent</code></summary>
+<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">verify</a>(authentication_method_id, { ...params }) -> MyAccount.VerifyAuthenticationMethodResponseContent</code></summary>
 <dl>
 <dd>
 
@@ -431,7 +429,7 @@ await client.authenticationMethods.verify("authentication_method_id", {
 <dl>
 <dd>
 
-**authenticationMethodId:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+**authentication_method_id:** `MyAccount.PathAuthenticationMethodId` — Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
 
 </dd>
 </dl>
@@ -447,7 +445,7 @@ await client.authenticationMethods.verify("authentication_method_id", {
 <dl>
 <dd>
 
-**requestOptions:** `AuthenticationMethods.RequestOptions`
+**requestOptions:** `AuthenticationMethodsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -515,7 +513,7 @@ await client.connectedAccounts.create({
 <dl>
 <dd>
 
-**requestOptions:** `ConnectedAccounts.RequestOptions`
+**requestOptions:** `ConnectedAccountsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -582,7 +580,7 @@ await client.connectedAccounts.complete({
 <dl>
 <dd>
 
-**requestOptions:** `ConnectedAccounts.RequestOptions`
+**requestOptions:** `ConnectedAccountsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -593,7 +591,7 @@ await client.connectedAccounts.complete({
 </dl>
 </details>
 
-<details><summary><code>client.connectedAccounts.<a href="/src/api/resources/connectedAccounts/client/Client.ts">list</a>({ ...params }) -> core.Page<MyAccount.ConnectedAccount, MyAccount.ListConnectedAccountsResponseContent></code></summary>
+<details><summary><code>client.connectedAccounts.<a href="/src/api/resources/connectedAccounts/client/Client.ts">list</a>({ ...params }) -> core.Page&lt;MyAccount.ConnectedAccount, MyAccount.ListConnectedAccountsResponseContent&gt;</code></summary>
 <dl>
 <dd>
 
@@ -665,7 +663,7 @@ const response = page.response;
 <dl>
 <dd>
 
-**requestOptions:** `ConnectedAccounts.RequestOptions`
+**requestOptions:** `ConnectedAccountsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -728,7 +726,7 @@ await client.connectedAccounts.delete("id");
 <dl>
 <dd>
 
-**requestOptions:** `ConnectedAccounts.RequestOptions`
+**requestOptions:** `ConnectedAccountsClient.RequestOptions`
 
 </dd>
 </dl>
@@ -741,7 +739,7 @@ await client.connectedAccounts.delete("id");
 
 ## ConnectedAccounts Connections
 
-<details><summary><code>client.connectedAccounts.connections.<a href="/src/api/resources/connectedAccounts/resources/connections/client/Client.ts">list</a>({ ...params }) -> core.Page<MyAccount.ConnectedAccountConnection, MyAccount.ListConnectedAccountsConnectionsResponseContent></code></summary>
+<details><summary><code>client.connectedAccounts.connections.<a href="/src/api/resources/connectedAccounts/resources/connections/client/Client.ts">list</a>({ ...params }) -> core.Page&lt;MyAccount.ConnectedAccountConnection, MyAccount.ListConnectedAccountsConnectionsResponseContent&gt;</code></summary>
 <dl>
 <dd>
 
@@ -811,7 +809,7 @@ const response = page.response;
 <dl>
 <dd>
 
-**requestOptions:** `Connections.RequestOptions`
+**requestOptions:** `ConnectionsClient.RequestOptions`
 
 </dd>
 </dl>

@@ -4,9 +4,17 @@ import * as MyAccount from "../index.js";
 
 export interface CreatePhoneAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "phone";
+    type: CreatePhoneAuthenticationMethod.Type;
     /** The destination phone number used to send verification codes via text and voice. */
     phone_number: string;
     /** The preferred communication method. */
-    preferred_authentication_method?: MyAccount.PhoneAuthenticationMethodEnum;
+    preferred_authentication_method?: MyAccount.PhoneAuthenticationMethodEnum | undefined;
+}
+
+export namespace CreatePhoneAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Phone: "phone",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

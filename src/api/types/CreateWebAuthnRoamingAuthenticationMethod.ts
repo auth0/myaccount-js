@@ -2,5 +2,13 @@
 
 export interface CreateWebAuthnRoamingAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "webauthn-roaming";
+    type: CreateWebAuthnRoamingAuthenticationMethod.Type;
+}
+
+export namespace CreateWebAuthnRoamingAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        WebauthnRoaming: "webauthn-roaming",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

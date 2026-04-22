@@ -1,4 +1,4 @@
-import { HttpResponsePromise, type RawResponse } from "../fetcher/index.js";
+import type { HttpResponsePromise, RawResponse } from "../fetcher/index.js";
 
 /**
  * A page of results from a paginated API.
@@ -68,7 +68,7 @@ export class Page<T, R = unknown> implements AsyncIterable<T> {
         }
     }
 
-    async *[Symbol.asyncIterator](): AsyncIterator<T, void, any> {
+    async *[Symbol.asyncIterator](): AsyncIterator<T, void, unknown> {
         for await (const message of this.iterMessages()) {
             yield message;
         }

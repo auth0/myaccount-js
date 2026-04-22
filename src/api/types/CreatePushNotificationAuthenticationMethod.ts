@@ -2,5 +2,13 @@
 
 export interface CreatePushNotificationAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "push-notification";
+    type: CreatePushNotificationAuthenticationMethod.Type;
+}
+
+export namespace CreatePushNotificationAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        PushNotification: "push-notification",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

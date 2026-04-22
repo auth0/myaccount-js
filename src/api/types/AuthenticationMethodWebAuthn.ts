@@ -4,7 +4,7 @@ import * as MyAccount from "../index.js";
 
 export interface AuthenticationMethodWebAuthn extends MyAccount.AuthenticationMethodMfaBase {
     /** The friendly name of the authentication method */
-    name?: string;
+    name?: string | undefined;
     /** The ID of the credential */
     key_id: string;
     /** The public key */

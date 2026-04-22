@@ -2,7 +2,15 @@
 
 export interface CreateEmailAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "email";
+    type: CreateEmailAuthenticationMethod.Type;
     /** The email address to use for sending one-time codes. */
     email: string;
+}
+
+export namespace CreateEmailAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Email: "email",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

@@ -2,5 +2,13 @@
 
 export interface CreateTotpAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "totp";
+    type: CreateTotpAuthenticationMethod.Type;
+}
+
+export namespace CreateTotpAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Totp: "totp",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

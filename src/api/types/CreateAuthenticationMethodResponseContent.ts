@@ -7,4 +7,5 @@ export type CreateAuthenticationMethodResponseContent =
     | MyAccount.WebAuthnCreationResponse
     | MyAccount.MfaBaseCreationResponse
     | MyAccount.QrCodeCreationResponse
-    | MyAccount.RecoveryCodeCreationResponse;
+    | MyAccount.RecoveryCodeCreationResponse
+    | MyAccount.PasswordCreationResponse;

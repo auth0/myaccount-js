@@ -9,9 +9,9 @@ export interface CompleteConnectedAccountsResponseContent {
     connection: string;
     access_type: MyAccount.AccessTypeEnum;
     /** Array of scopes granted */
-    scopes?: string[];
+    scopes?: string[] | undefined;
     /** ISO date string of when the connected account was created */
     created_at: string;
     /** ISO date string of when the refresh token expires (optional) */
-    expires_at?: string;
+    expires_at?: string | undefined;
 }

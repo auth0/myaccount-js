@@ -30,8 +30,18 @@ export interface CreateConnectedAccountsRequestContent {
     /** The PKCE code challenge derived from the code verifier. */
     code_challenge?: string;
     /** The method used to derive the code challenge. Required when code_challenge is provided. */
-    code_challenge_method?: "S256";
+    code_challenge_method?: CreateConnectedAccountsRequestContent.CodeChallengeMethod;
+    /** Defines the permissions that the client requests from the Identity Provider. Must include the standard scopes used to identify the user (e.g. 'openid', 'email', 'profile'), the scope required to obtain refresh tokens if needed (e.g. 'offline_access'), and any custom scopes the client needs to access protected resources. */
+    scopes?: string[];
     authorization_params?: MyAccount.AuthorizationParams;
+}
+
+export namespace CreateConnectedAccountsRequestContent {
+    /** The method used to derive the code challenge. Required when code_challenge is provided. */
+    export const CodeChallengeMethod = {
+        S256: "S256",
+    } as const;
+    export type CodeChallengeMethod = (typeof CodeChallengeMethod)[keyof typeof CodeChallengeMethod];
 }
 
 /**

@@ -3,10 +3,17 @@
 import * as MyAccount from "../index.js";
 
 export interface AuthenticatorAttestationResponse {
-    authenticatorAttachment?: MyAccount.AuthenticatorAttachmentEnum;
-    clientExtensionResults?: MyAccount.ClientExtensionResults;
+    authenticatorAttachment?: MyAccount.AuthenticatorAttachmentEnum | undefined;
+    clientExtensionResults?: MyAccount.ClientExtensionResults | undefined;
     id: string;
     rawId: string;
     response: MyAccount.AuthenticatorAttestationResponseData;
-    type: "public-key";
+    type: AuthenticatorAttestationResponse.Type;
+}
+
+export namespace AuthenticatorAttestationResponse {
+    export const Type = {
+        PublicKey: "public-key",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

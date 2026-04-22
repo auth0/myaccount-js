@@ -7,22 +7,19 @@ import * as MyAccount from "../index.js";
  */
 export interface AuthorizationParams {
     /** Specifies the desired Authentication Context Class Reference values, which indicate the required level of authentication (e.g., multi-factor, passwordless). The Identity Provider (IdP) may enforce a specific assurance level based on these values. */
-    acr_values?: string;
+    acr_values?: string | undefined;
     /** Defines the intended recipient of the access token, typically indicating who the token is meant for (e.g., an API identifier). */
-    audience?: string;
+    audience?: string | undefined;
     /** Specifies which resource server the client is requesting access to (used in OAuth 2.0 Resource Indicators). */
-    resource?: string;
-    display?: MyAccount.DisplayEnum;
+    resource?: string | undefined;
+    display?: MyAccount.DisplayEnum | undefined;
     /** Provides a previously issued id_token to the IdP. It can be used to suggest which user is being authenticated or to facilitate logout requests. */
-    id_token_hint?: string;
+    id_token_hint?: string | undefined;
     /** Supplies a hint about the user's identifier (like an email address or username) to pre-populate the login form. */
-    login_hint?: string;
+    login_hint?: string | undefined;
     /** Indicates the maximum time (in seconds) since the user's last authentication. If exceeded, the IdP forces the user to re-authenticate. */
-    max_age?: number;
-    prompt?: MyAccount.PromptEnum;
+    max_age?: number | undefined;
+    prompt?: MyAccount.PromptEnum | undefined;
     /** Suggests the preferred languages for the user interface, passed as a space-separated list of BCP47 language tags (e.g., 'en', 'es', 'fr'). */
-    ui_locales?: string;
-    access_type?: MyAccount.GoogleAccessTypeEnum;
-    /** Defines the permissions the client requests from the IdP. Must include standard scopes to identify the user (e.g. 'openid', 'email', 'profile'), scopes required to obtain refresh tokens (e.g. 'offline_access'), and any custom scopes the client needs to access protected resources. */
-    scope?: string;
+    ui_locales?: string | undefined;
 }

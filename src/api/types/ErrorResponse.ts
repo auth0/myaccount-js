@@ -7,5 +7,5 @@ export interface ErrorResponse {
     status: number;
     title: string;
     detail: string;
-    validation_errors?: MyAccount.ValidationError[];
+    validation_errors?: MyAccount.ValidationError[] | undefined;
 }

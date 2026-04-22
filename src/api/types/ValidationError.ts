@@ -2,7 +2,7 @@
 
 export interface ValidationError {
     detail: string;
-    field?: string;
-    pointer?: string;
-    source?: string;
+    field?: string | undefined;
+    pointer?: string | undefined;
+    source?: string | undefined;
 }

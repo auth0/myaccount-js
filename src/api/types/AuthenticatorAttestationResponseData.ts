@@ -3,5 +3,5 @@
 export interface AuthenticatorAttestationResponseData {
     attestationObject: string;
     clientDataJSON: string;
-    transports?: string[];
+    transports?: string[] | undefined;
 }

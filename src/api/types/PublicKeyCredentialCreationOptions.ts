@@ -3,10 +3,10 @@
 import * as MyAccount from "../index.js";
 
 export interface PublicKeyCredentialCreationOptions {
-    authenticatorSelection?: MyAccount.AuthenticatorSelection;
+    authenticatorSelection?: MyAccount.AuthenticatorSelection | undefined;
     challenge: string;
     pubKeyCredParams: MyAccount.PublicKeyCredentialParameter[];
     rp: MyAccount.RelyingParty;
-    timeout?: number;
+    timeout?: number | undefined;
     user: MyAccount.User;
 }

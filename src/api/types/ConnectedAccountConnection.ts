@@ -6,5 +6,5 @@ export interface ConnectedAccountConnection {
     /** The strategy used by the connection (e.g., 'oauth2', 'oidc'). */
     strategy: string;
     /** The available scopes for this connection. */
-    scopes?: string[];
+    scopes?: string[] | undefined;
 }

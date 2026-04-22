@@ -13,4 +13,5 @@ export type CreateAuthenticationMethodRequestContent =
     | MyAccount.CreatePushNotificationAuthenticationMethod
     | MyAccount.CreateRecoveryCodeAuthenticationMethod
     | MyAccount.CreateEmailAuthenticationMethod
-    | MyAccount.CreatePhoneAuthenticationMethod;
+    | MyAccount.CreatePhoneAuthenticationMethod
+    | MyAccount.CreatePasswordAuthenticationMethod;
