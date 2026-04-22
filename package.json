@@ -55,7 +55,7 @@
         "ts-loader": "^9.5.4",
         "vitest": "^4.1.1",
         "msw": "2.11.2",
-        "@types/node": "^18.19.70",
+        "@types/node": "^22.0.0",
         "typescript": "~5.9.3",
         "prettier": "3.8.1",
         "typedoc": "^0.28.13",
@@ -76,7 +76,7 @@
     },
     "packageManager": "pnpm@10.33.0",
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=20.0.0"
     },
     "sideEffects": false,
     "description": "Auth0 SDK for JavaScript/TypeScript to manage user accounts, profiles, sessions, and authentication settings",
