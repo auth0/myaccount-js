@@ -3,6 +3,6 @@
 import * as MyAccount from "../index.js";
 
 export interface AuthenticatorSelection {
-    residentKey?: MyAccount.ResidentKeyEnum;
-    userVerification?: MyAccount.UserVerificationEnum;
+    residentKey?: MyAccount.ResidentKeyEnum | undefined;
+    userVerification?: MyAccount.UserVerificationEnum | undefined;
 }

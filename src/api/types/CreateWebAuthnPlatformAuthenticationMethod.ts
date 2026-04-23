@@ -2,5 +2,13 @@
 
 export interface CreateWebAuthnPlatformAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "webauthn-platform";
+    type: CreateWebAuthnPlatformAuthenticationMethod.Type;
+}
+
+export namespace CreateWebAuthnPlatformAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        WebauthnPlatform: "webauthn-platform",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

@@ -4,5 +4,5 @@ import * as MyAccount from "../index.js";
 
 export interface Factor {
     type: MyAccount.FactorTypeEnum;
-    usage?: MyAccount.Usage;
+    usage?: MyAccount.Usage | undefined;
 }

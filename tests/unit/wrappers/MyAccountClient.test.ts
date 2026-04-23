@@ -2,8 +2,8 @@ import { MyAccountClient } from "../../../src/wrappers/MyAccountClient.js";
 import { Auth0ClientTelemetry } from "../../../src/utils/auth0ClientTelemetry.js";
 import { generateClientInfo } from "../../../src/utils/clientInfo.js";
 
-// Mock dependencies
-vi.mock("../../../src/utils/auth0ClientTelemetry.js");
+// Mock the dependencies with explicit factory functions (vitest v4 compatible)
+// Use regular functions (not arrows) so mocks are constructible with `new`.
 vi.mock("../../../src/utils/clientInfo.js");
 vi.mock("../../../src/Client.js", () => {
     class MockMyAccountClient {
@@ -13,6 +13,17 @@ vi.mock("../../../src/Client.js", () => {
         MyAccountClient: MockMyAccountClient,
     };
 });
+
+const mockTelemetryInstance = {
+    getHeaders: vi.fn().mockReturnValue({ "Auth0-Client": "base64-encoded-telemetry" }),
+    getAuth0ClientHeader: vi.fn().mockReturnValue("base64-encoded-telemetry"),
+};
+
+vi.mock("../../../src/utils/auth0ClientTelemetry.js", () => ({
+    Auth0ClientTelemetry: vi.fn(function () {
+        return mockTelemetryInstance;
+    }),
+}));
 
 const mockGenerateClientInfo = vi.mocked(generateClientInfo);
 const MockAuth0ClientTelemetry = vi.mocked(Auth0ClientTelemetry);
@@ -28,14 +39,11 @@ describe("MyAccountClient", () => {
             env: { node: "20.0.0" },
         });
 
-        // Setup default mock for Auth0ClientTelemetry
-        MockAuth0ClientTelemetry.mockImplementation(
-            () =>
-                ({
-                    getAuth0ClientHeader: () => "base64-encoded-telemetry",
-                    getHeaders: (headers: any) => ({ ...headers, "Auth0-Client": "base64-encoded-telemetry" }),
-                }) as any,
-        );
+        // Re-apply mock implementations after clearAllMocks resets them.
+        // Use regular functions (not arrows) so mocks remain constructible.
+        (Auth0ClientTelemetry as ReturnType<typeof vi.fn>).mockImplementation(function () {
+            return mockTelemetryInstance;
+        });
     });
 
     describe("constructor", () => {

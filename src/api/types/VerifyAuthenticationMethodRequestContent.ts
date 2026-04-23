@@ -7,6 +7,7 @@ import * as MyAccount from "../index.js";
  */
 export type VerifyAuthenticationMethodRequestContent =
     | MyAccount.VerifyPasskeyAuthenticationMethod
+    | MyAccount.VerifyPasswordAuthenticationMethod
     | MyAccount.VerifyWebAuthnPlatformAuthenticationMethod
     | MyAccount.VerifyWebAuthnRoamingAuthenticationMethod
     | MyAccount.VerifyPushNotificationAuthenticationMethod

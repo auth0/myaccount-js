@@ -131,7 +131,7 @@ export function createCoreTokenSupplier(tokenSupplier: Auth0TokenSupplier): core
 
     if (typeof tokenSupplier === "function") {
         return async ({ endpointMetadata }) => {
-            const scopes = extractScopesFromMetadata(endpointMetadata);
+            const scopes = extractScopesFromMetadata(endpointMetadata ?? {});
             const scope = scopes.join(" ");
 
             // Always call with scope object for consistency

@@ -9,7 +9,7 @@ export default [
     },
     {
         // Relaxed rules for Fern-generated code
-        files: ["src/Client.ts", "src/api/**", "src/core/**", "src/errors/**"],
+        files: ["src/Client.ts", "src/BaseClient.ts", "src/api/**", "src/auth/**", "src/core/**", "src/errors/**"],
         rules: {
             "@typescript-eslint/no-namespace": "off",
             "@typescript-eslint/no-empty-object-type": "off",
@@ -19,6 +19,7 @@ export default [
             "no-case-declarations": "off",
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-unused-vars": "off",
+            "no-empty": "warn",
         },
     },
     {
@@ -26,6 +27,7 @@ export default [
         files: ["src/wrappers/**", "src/utils/**", "tests/**", "example.ts"],
         rules: {
             "@typescript-eslint/no-namespace": "off", // Allow namespaces in wrappers
+            "@typescript-eslint/no-empty-object-type": "off",
             "@typescript-eslint/no-explicit-any": "warn",
             "@typescript-eslint/no-unused-vars": [
                 "warn",

@@ -2,5 +2,13 @@
 
 export interface CreateRecoveryCodeAuthenticationMethod {
     /** Authentication method type (factor) */
-    type: "recovery-code";
+    type: CreateRecoveryCodeAuthenticationMethod.Type;
+}
+
+export namespace CreateRecoveryCodeAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        RecoveryCode: "recovery-code",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

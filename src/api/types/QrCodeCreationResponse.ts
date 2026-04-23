@@ -6,5 +6,5 @@ export interface QrCodeCreationResponse extends MyAccount.MfaBaseCreationRespons
     /** The URI for the QR code to be scanned by the authenticator. */
     barcode_uri: string;
     /** The manual input code for the authenticator in case QR codes cannot be used. */
-    manual_input_code?: string;
+    manual_input_code?: string | undefined;
 }

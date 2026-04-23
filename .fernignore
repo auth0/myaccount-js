@@ -31,6 +31,8 @@ typedoc.config.js
 .github/
 README.md
 CONTRIBUTING.md
+CHANGELOG.md
+LICENSE
 
 # ESLint configuration
 
@@ -39,3 +41,12 @@ eslint.config.mjs
 # Husky pre-commit hooks
 
 .husky/
+
+# Documentation and examples
+
+docs/
+examples/
+
+# Fern configuration
+
+.fern/
