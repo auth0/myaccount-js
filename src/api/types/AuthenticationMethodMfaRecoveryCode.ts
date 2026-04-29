@@ -2,4 +2,4 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodMfaRecoveryCode = MyAccount.AuthenticationMethodMfaBase;
+export interface AuthenticationMethodMfaRecoveryCode extends MyAccount.AuthenticationMethodMfaBase {}

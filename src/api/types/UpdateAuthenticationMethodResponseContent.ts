@@ -3,12 +3,50 @@
 import * as MyAccount from "../index.js";
 
 export type UpdateAuthenticationMethodResponseContent =
-    | MyAccount.AuthenticationMethodPassword
-    | MyAccount.AuthenticationMethodPasskey
-    | MyAccount.AuthenticationMethodMfaRecoveryCode
-    | MyAccount.AuthenticationMethodMfaPushNotification
-    | MyAccount.AuthenticationMethodMfaTotp
-    | MyAccount.AuthenticationMethodWebAuthnPlatform
-    | MyAccount.AuthenticationMethodWebAuthnRoaming
-    | MyAccount.AuthenticationMethodPhone
-    | MyAccount.AuthenticationMethodEmail;
+    | MyAccount.UpdateAuthenticationMethodResponseContent.Password
+    | MyAccount.UpdateAuthenticationMethodResponseContent.Passkey
+    | MyAccount.UpdateAuthenticationMethodResponseContent.RecoveryCode
+    | MyAccount.UpdateAuthenticationMethodResponseContent.PushNotification
+    | MyAccount.UpdateAuthenticationMethodResponseContent.Totp
+    | MyAccount.UpdateAuthenticationMethodResponseContent.WebauthnPlatform
+    | MyAccount.UpdateAuthenticationMethodResponseContent.WebauthnRoaming
+    | MyAccount.UpdateAuthenticationMethodResponseContent.Phone
+    | MyAccount.UpdateAuthenticationMethodResponseContent.Email;
+
+export namespace UpdateAuthenticationMethodResponseContent {
+    export interface Password extends MyAccount.AuthenticationMethodPassword {
+        type: "password";
+    }
+
+    export interface Passkey extends MyAccount.AuthenticationMethodPasskey {
+        type: "passkey";
+    }
+
+    export interface RecoveryCode extends MyAccount.AuthenticationMethodMfaRecoveryCode {
+        type: "recovery-code";
+    }
+
+    export interface PushNotification extends MyAccount.AuthenticationMethodMfaPushNotification {
+        type: "push-notification";
+    }
+
+    export interface Totp extends MyAccount.AuthenticationMethodMfaTotp {
+        type: "totp";
+    }
+
+    export interface WebauthnPlatform extends MyAccount.AuthenticationMethodWebAuthnPlatform {
+        type: "webauthn-platform";
+    }
+
+    export interface WebauthnRoaming extends MyAccount.AuthenticationMethodWebAuthnRoaming {
+        type: "webauthn-roaming";
+    }
+
+    export interface Phone extends MyAccount.AuthenticationMethodPhone {
+        type: "phone";
+    }
+
+    export interface Email extends MyAccount.AuthenticationMethodEmail {
+        type: "email";
+    }
+}

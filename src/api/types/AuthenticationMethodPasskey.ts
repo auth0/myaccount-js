@@ -2,4 +2,26 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodPasskey = MyAccount.AuthenticationMethodBase;
+export interface AuthenticationMethodPasskey extends MyAccount.AuthenticationMethodBase {
+    /** Whether the credential was backed up */
+    credential_backed_up: boolean;
+    credential_device_type: MyAccount.CredentialDeviceTypeEnum;
+    /** The ID of the user identity linked with the authentication method */
+    identity_user_id: string;
+    /** The ID of the credential */
+    key_id: string;
+    /** The public key */
+    public_key: string;
+    /** The transports used by clients to communicate with the authenticator */
+    transports?: string[] | undefined;
+    /** The user-agent of the browser used to create the passkey */
+    user_agent?: string | undefined;
+    /** The user handle of the user identity */
+    user_handle: string;
+    /** Authenticator Attestation Globally Unique Identifier */
+    aaguid?: string | undefined;
+    /** Relying Party Identifier */
+    relying_party_id?: string | undefined;
+    /** The date and time when the authentication method was last used */
+    last_auth_at?: string | undefined;
+}

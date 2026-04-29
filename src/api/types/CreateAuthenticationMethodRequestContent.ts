@@ -6,12 +6,50 @@ import * as MyAccount from "../index.js";
  * Request content for creating an authentication method
  */
 export type CreateAuthenticationMethodRequestContent =
-    | MyAccount.CreatePasskeyAuthenticationMethod
-    | MyAccount.CreateWebAuthnPlatformAuthenticationMethod
-    | MyAccount.CreateWebAuthnRoamingAuthenticationMethod
-    | MyAccount.CreateTotpAuthenticationMethod
-    | MyAccount.CreatePushNotificationAuthenticationMethod
-    | MyAccount.CreateRecoveryCodeAuthenticationMethod
-    | MyAccount.CreateEmailAuthenticationMethod
-    | MyAccount.CreatePhoneAuthenticationMethod
-    | MyAccount.CreatePasswordAuthenticationMethod;
+    | MyAccount.CreateAuthenticationMethodRequestContent.Passkey
+    | MyAccount.CreateAuthenticationMethodRequestContent.WebauthnPlatform
+    | MyAccount.CreateAuthenticationMethodRequestContent.WebauthnRoaming
+    | MyAccount.CreateAuthenticationMethodRequestContent.Totp
+    | MyAccount.CreateAuthenticationMethodRequestContent.PushNotification
+    | MyAccount.CreateAuthenticationMethodRequestContent.RecoveryCode
+    | MyAccount.CreateAuthenticationMethodRequestContent.Email
+    | MyAccount.CreateAuthenticationMethodRequestContent.Phone
+    | MyAccount.CreateAuthenticationMethodRequestContent.Password;
+
+export namespace CreateAuthenticationMethodRequestContent {
+    export interface Passkey extends MyAccount.CreatePasskeyAuthenticationMethod {
+        type: "passkey";
+    }
+
+    export interface WebauthnPlatform extends MyAccount.CreateWebAuthnPlatformAuthenticationMethod {
+        type: "webauthn-platform";
+    }
+
+    export interface WebauthnRoaming extends MyAccount.CreateWebAuthnRoamingAuthenticationMethod {
+        type: "webauthn-roaming";
+    }
+
+    export interface Totp extends MyAccount.CreateTotpAuthenticationMethod {
+        type: "totp";
+    }
+
+    export interface PushNotification extends MyAccount.CreatePushNotificationAuthenticationMethod {
+        type: "push-notification";
+    }
+
+    export interface RecoveryCode extends MyAccount.CreateRecoveryCodeAuthenticationMethod {
+        type: "recovery-code";
+    }
+
+    export interface Email extends MyAccount.CreateEmailAuthenticationMethod {
+        type: "email";
+    }
+
+    export interface Phone extends MyAccount.CreatePhoneAuthenticationMethod {
+        type: "phone";
+    }
+
+    export interface Password extends MyAccount.CreatePasswordAuthenticationMethod {
+        type: "password";
+    }
+}

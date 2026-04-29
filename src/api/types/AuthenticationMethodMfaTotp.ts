@@ -2,4 +2,7 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodMfaTotp = MyAccount.AuthenticationMethodMfaBase;
+export interface AuthenticationMethodMfaTotp extends MyAccount.AuthenticationMethodMfaBase {
+    /** The friendly name of the authentication method */
+    name?: string | undefined;
+}
