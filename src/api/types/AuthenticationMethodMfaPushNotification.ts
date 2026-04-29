@@ -2,4 +2,7 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodMfaPushNotification = MyAccount.AuthenticationMethodMfaBase;
+export interface AuthenticationMethodMfaPushNotification extends MyAccount.AuthenticationMethodMfaBase {
+    /** The friendly name of the authentication method */
+    name?: string | undefined;
+}

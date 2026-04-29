@@ -2,4 +2,9 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodEmail = MyAccount.AuthenticationMethodMfaBase;
+export interface AuthenticationMethodEmail extends MyAccount.AuthenticationMethodMfaBase {
+    /** The friendly name of the authentication method */
+    name?: string | undefined;
+    /** The email address used to send verification messages. */
+    email: string;
+}

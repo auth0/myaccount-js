@@ -10,7 +10,16 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            authentication_methods: [{ id: "id", created_at: "2024-01-15T09:30:00Z", usage: ["primary"] }],
+            authentication_methods: [
+                {
+                    type: "password",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    identity_user_id: "identity_user_id",
+                    last_password_reset: "2024-01-15T09:30:00Z",
+                },
+            ],
         };
 
         server
@@ -104,7 +113,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (1)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = {
             auth_session: "auth_session",
             authn_params_public_key: {
@@ -130,14 +139,16 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.create({});
+        const response = await client.authenticationMethods.create({
+            type: "passkey",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
     test("create (2)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
 
         server
@@ -150,14 +161,16 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.create({});
+            return await client.authenticationMethods.create({
+                type: "passkey",
+            });
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
     test("create (3)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
 
         server
@@ -170,14 +183,16 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.create({});
+            return await client.authenticationMethods.create({
+                type: "passkey",
+            });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
     test("create (4)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
 
         server
@@ -190,14 +205,16 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.create({});
+            return await client.authenticationMethods.create({
+                type: "passkey",
+            });
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
     test("create (5)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
 
         server
@@ -210,14 +227,16 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.create({});
+            return await client.authenticationMethods.create({
+                type: "passkey",
+            });
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
 
     test("create (6)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = {};
+        const rawRequestBody = { type: "passkey" };
         const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
 
         server
@@ -230,7 +249,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.create({});
+            return await client.authenticationMethods.create({
+                type: "passkey",
+            });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);
     });
 
@@ -238,7 +259,14 @@ describe("AuthenticationMethodsClient", () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
-        const rawResponseBody = { id: "id", created_at: "2024-01-15T09:30:00Z", usage: ["primary"] };
+        const rawResponseBody = {
+            type: "password",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            identity_user_id: "identity_user_id",
+            last_password_reset: "2024-01-15T09:30:00Z",
+        };
 
         server
             .mockEndpoint()
@@ -442,7 +470,14 @@ describe("AuthenticationMethodsClient", () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {};
-        const rawResponseBody = { id: "id", created_at: "2024-01-15T09:30:00Z", usage: ["primary"] };
+        const rawResponseBody = {
+            type: "password",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            identity_user_id: "identity_user_id",
+            last_password_reset: "2024-01-15T09:30:00Z",
+        };
 
         server
             .mockEndpoint()
@@ -569,7 +604,14 @@ describe("AuthenticationMethodsClient", () => {
                 type: "public-key",
             },
         };
-        const rawResponseBody = { id: "id", created_at: "2024-01-15T09:30:00Z", usage: ["primary"] };
+        const rawResponseBody = {
+            type: "password",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            identity_user_id: "identity_user_id",
+            last_password_reset: "2024-01-15T09:30:00Z",
+        };
 
         server
             .mockEndpoint()

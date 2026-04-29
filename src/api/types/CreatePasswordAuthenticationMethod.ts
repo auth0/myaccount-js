@@ -2,4 +2,4 @@
 
 import * as MyAccount from "../index.js";
 
-export type CreatePasswordAuthenticationMethod = MyAccount.IdentityAuthenticationMethodBase;
+export interface CreatePasswordAuthenticationMethod extends MyAccount.IdentityAuthenticationMethodBase {}

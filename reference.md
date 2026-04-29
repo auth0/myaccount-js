@@ -142,7 +142,9 @@ Start the enrollment of a supported authentication method.
 <dd>
 
 ```typescript
-await client.authenticationMethods.create({});
+await client.authenticationMethods.create({
+    type: "passkey",
+});
 ```
 
 </dd>

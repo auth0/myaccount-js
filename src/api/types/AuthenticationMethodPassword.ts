@@ -2,4 +2,9 @@
 
 import * as MyAccount from "../index.js";
 
-export type AuthenticationMethodPassword = MyAccount.AuthenticationMethodBase;
+export interface AuthenticationMethodPassword extends MyAccount.AuthenticationMethodBase {
+    /** The ID of the user identity linked with the authentication method */
+    identity_user_id: string;
+    /** The date of the last password reset */
+    last_password_reset?: string | undefined;
+}
