@@ -25,6 +25,7 @@ export class AuthenticationMethodsClient {
     /**
      * Retrieve detailed list of authentication methods belonging to the authenticated user.
      *
+     * @param {MyAccount.ListAuthenticationMethodsRequestParameters} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -33,18 +34,26 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.list()
+     *     await client.authenticationMethods.list({
+     *         type: "password"
+     *     })
      */
     public list(
+        request: MyAccount.ListAuthenticationMethodsRequestParameters = {},
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.ListAuthenticationMethodsResponseContent> {
-        return core.HttpResponsePromise.fromPromise(this.__list(requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__list(request, requestOptions));
     }
 
     private async __list(
+        request: MyAccount.ListAuthenticationMethodsRequestParameters = {},
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.ListAuthenticationMethodsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }] };
+        const { type: type_ } = request;
+        const _queryParams: Record<string, unknown> = {
+            type: type_ !== undefined ? type_ : undefined,
+        };
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
@@ -62,7 +71,11 @@ export class AuthenticationMethodsClient {
             ),
             method: "GET",
             headers: _headers,
-            queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
+            queryString: core.url
+                .queryBuilder()
+                .addMany(_queryParams)
+                .mergeAdditional(requestOptions?.queryParams)
+                .build(),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -122,6 +135,38 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "phone",
+     *         phone_number: "phone_number"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "email",
+     *         email: "email"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "totp"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "push-notification"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "recovery-code"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.create({
+     *         type: "password"
+     *     })
      *
      * @example
      *     await client.authenticationMethods.create({
@@ -541,13 +586,33 @@ export class AuthenticationMethodsClient {
      *
      * @example
      *     await client.authenticationMethods.verify("authentication_method_id", {
-     *         auth_session: "auth_session",
+     *         auth_session: "Fe26.2**05c400ed...",
+     *         otp_code: "123456"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.verify("authentication_method_id", {
+     *         auth_session: "Fe26.2**05c400ed..."
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.verify("authentication_method_id", {
+     *         auth_session: "Fe26.2**05c400ed...",
+     *         new_password: "MySecureP@ssw0rd!"
+     *     })
+     *
+     * @example
+     *     await client.authenticationMethods.verify("authentication_method_id", {
+     *         auth_session: "Fe26.2**05c400ed...",
      *         authn_response: {
-     *             id: "id",
-     *             rawId: "rawId",
+     *             clientExtensionResults: {
+     *                 "key": "value"
+     *             },
+     *             id: "dGVzdC1jcmVkZW50aWFsLWlk",
+     *             rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
      *             response: {
-     *                 attestationObject: "attestationObject",
-     *                 clientDataJSON: "clientDataJSON"
+     *                 attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+     *                 clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh..."
      *             },
      *             type: "public-key"
      *         }

@@ -4,6 +4,17 @@ import * as MyAccount from "../index.js";
 
 /**
  * @example
+ *     {
+ *         type: "password"
+ *     }
+ */
+export interface ListAuthenticationMethodsRequestParameters {
+    /** Filter authentication methods by type */
+    type?: MyAccount.FactorTypeEnum | null;
+}
+
+/**
+ * @example
  *     {}
  */
 export interface UpdateAuthenticationMethodRequestContent {

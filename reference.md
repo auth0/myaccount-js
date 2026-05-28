@@ -59,7 +59,7 @@ await client.factors.list();
 
 ## AuthenticationMethods
 
-<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">list</a>() -> MyAccount.ListAuthenticationMethodsResponseContent</code></summary>
+<details><summary><code>client.authenticationMethods.<a href="/src/api/resources/authenticationMethods/client/Client.ts">list</a>({ ...params }) -> MyAccount.ListAuthenticationMethodsResponseContent</code></summary>
 <dl>
 <dd>
 
@@ -87,7 +87,9 @@ Retrieve detailed list of authentication methods belonging to the authenticated 
 <dd>
 
 ```typescript
-await client.authenticationMethods.list();
+await client.authenticationMethods.list({
+    type: "password",
+});
 ```
 
 </dd>
@@ -99,6 +101,14 @@ await client.authenticationMethods.list();
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**request:** `MyAccount.ListAuthenticationMethodsRequestParameters`
+
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -143,7 +153,8 @@ Start the enrollment of a supported authentication method.
 
 ```typescript
 await client.authenticationMethods.create({
-    type: "passkey",
+    type: "phone",
+    phone_number: "phone_number",
 });
 ```
 
@@ -405,16 +416,8 @@ Confirm the enrollment of a supported authentication method.
 
 ```typescript
 await client.authenticationMethods.verify("authentication_method_id", {
-    auth_session: "auth_session",
-    authn_response: {
-        id: "id",
-        rawId: "rawId",
-        response: {
-            attestationObject: "attestationObject",
-            clientDataJSON: "clientDataJSON",
-        },
-        type: "public-key",
-    },
+    auth_session: "Fe26.2**05c400ed...",
+    otp_code: "123456",
 });
 ```
 
