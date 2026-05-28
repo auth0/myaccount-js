@@ -12,12 +12,81 @@ describe("AuthenticationMethodsClient", () => {
         const rawResponseBody = {
             authentication_methods: [
                 {
+                    type: "email",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    confirmed: true,
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                    name: "name",
+                    email: "email",
+                },
+                {
+                    type: "phone",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    confirmed: true,
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                    name: "name",
+                    phone_number: "phone_number",
+                    preferred_authentication_method: "sms",
+                },
+                {
+                    type: "totp",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    confirmed: true,
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                    name: "name",
+                },
+                {
+                    type: "passkey",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    credential_backed_up: true,
+                    credential_device_type: "multi_device",
+                    identity_user_id: "identity_user_id",
+                    key_id: "key_id",
+                    public_key: "public_key",
+                    transports: ["internal"],
+                    user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
+                    user_handle: "user_handle",
+                    aaguid: "aaguid",
+                    relying_party_id: "relying_party_id",
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                },
+                {
                     type: "password",
                     id: "id",
                     created_at: "2024-01-15T09:30:00Z",
                     usage: ["primary"],
                     identity_user_id: "identity_user_id",
                     last_password_reset: "2024-01-15T09:30:00Z",
+                },
+                {
+                    type: "webauthn-platform",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    confirmed: true,
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                    name: "name",
+                    key_id: "key_id",
+                    public_key: "public_key",
+                },
+                {
+                    type: "webauthn-roaming",
+                    id: "id",
+                    created_at: "2024-01-15T09:30:00Z",
+                    usage: ["primary"],
+                    confirmed: true,
+                    last_auth_at: "2024-01-15T09:30:00Z",
+                    name: "name",
+                    key_id: "key_id",
+                    public_key: "public_key",
                 },
             ],
         };
@@ -30,7 +99,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.list();
+        const response = await client.authenticationMethods.list({
+            type: "password",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -113,22 +184,136 @@ describe("AuthenticationMethodsClient", () => {
     test("create (1)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (2)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "email", email: "email" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "email",
+            email: "email",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (3)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "totp" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "totp",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (4)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "push-notification" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "push-notification",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (5)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "recovery-code" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "recovery-code",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (6)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "password" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "password",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (7)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
-        const rawResponseBody = {
-            auth_session: "auth_session",
-            authn_params_public_key: {
-                authenticatorSelection: { residentKey: "required", userVerification: "required" },
-                challenge: "challenge",
-                pubKeyCredParams: [
-                    { alg: -8, type: "public-key" },
-                    { alg: -7, type: "public-key" },
-                    { alg: -257, type: "public-key" },
-                ],
-                rp: { id: "id", name: "name" },
-                timeout: 60000,
-                user: { id: "id", name: "name", displayName: "displayName" },
-            },
-        };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
             .mockEndpoint()
@@ -145,7 +330,206 @@ describe("AuthenticationMethodsClient", () => {
         expect(response).toEqual(rawResponseBody);
     });
 
-    test("create (2)", async () => {
+    test("create (8)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (9)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = { id: "email|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (10)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = {
+            id: "totp|dev_XXXXXXXXXXXXXXXX",
+            auth_session: "Fe26.2**05c400ed...",
+            barcode_uri:
+                "otpauth://totp/my-tenant:auth0%7C507f1f77bcf86cd799439011?secret=JBSWY3DPEHPK3PXP&issuer=my-tenant&algorithm=SHA1&digits=6&period=30",
+            manual_input_code: "JBSWY3DPEHPK3PXP",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (11)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = {
+            id: "push-notification|dev_XXXXXXXXXXXXXXXX",
+            auth_session: "Fe26.2**05c400ed...",
+            barcode_uri:
+                "otpauth://totp/my-tenant:auth0%7C507f1f77bcf86cd799439011?secret=JBSWY3DPEHPK3PXP&issuer=my-tenant&algorithm=SHA1&digits=6&period=30",
+            manual_input_code: "manual_input_code",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (12)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = {
+            id: "recovery-code|dev_XXXXXXXXXXXXXXXX",
+            auth_session: "Fe26.2**05c400ed...",
+            recovery_code: "ABCDEFGHIJKLMNOPQRSTUVWX",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (13)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = {
+            id: "password|new",
+            policy: {
+                complexity: {
+                    min_length: 8,
+                    character_types: ["lowercase", "uppercase", "number", "special"],
+                    character_type_rule: "three_of_four",
+                    identical_characters: "block",
+                    sequential_characters: "block",
+                    max_length_exceeded: "truncate",
+                },
+                profile_data: { active: true, blocked_fields: ["name", "email"] },
+                history: { active: true, size: 5 },
+                dictionary: { active: true, default: "en_10k" },
+            },
+            auth_session: "Fe26.2**05c400ed...",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (14)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawResponseBody = {
+            auth_session: "Fe26.2**05c400ed...",
+            authn_params_public_key: {
+                authenticatorSelection: { residentKey: "required", userVerification: "preferred" },
+                challenge: "dGVzdC1jaGFsbGVuZ2U",
+                pubKeyCredParams: [
+                    { alg: -7, type: "public-key" },
+                    { alg: -257, type: "public-key" },
+                ],
+                rp: { id: "example.auth0.com", name: "My Application" },
+                timeout: 60000,
+                user: { id: "YXV0aDB8NTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDEx", name: "user@example.com", displayName: "User" },
+            },
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.create({
+            type: "phone",
+            phone_number: "phone_number",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("create (15)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
@@ -167,7 +551,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
-    test("create (3)", async () => {
+    test("create (16)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
@@ -189,7 +573,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
-    test("create (4)", async () => {
+    test("create (17)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
@@ -211,7 +595,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
-    test("create (5)", async () => {
+    test("create (18)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
@@ -233,7 +617,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
 
-    test("create (6)", async () => {
+    test("create (19)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { type: "passkey" };
@@ -260,6 +644,138 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (2)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "email",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            email: "email",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (3)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "totp",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (4)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "push-notification",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (5)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "recovery-code",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (6)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
             type: "password",
             id: "id",
             created_at: "2024-01-15T09:30:00Z",
@@ -280,7 +796,97 @@ describe("AuthenticationMethodsClient", () => {
         expect(response).toEqual(rawResponseBody);
     });
 
-    test("get (2)", async () => {
+    test("get (7)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "passkey",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            credential_backed_up: true,
+            credential_device_type: "multi_device",
+            identity_user_id: "identity_user_id",
+            key_id: "key_id",
+            public_key: "public_key",
+            transports: ["internal"],
+            user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
+            user_handle: "user_handle",
+            aaguid: "aaguid",
+            relying_party_id: "relying_party_id",
+            last_auth_at: "2024-01-15T09:30:00Z",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (8)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "webauthn-platform",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            key_id: "key_id",
+            public_key: "public_key",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (9)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = {
+            type: "webauthn-roaming",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            key_id: "key_id",
+            public_key: "public_key",
+        };
+
+        server
+            .mockEndpoint()
+            .get("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.get("authentication_method_id");
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("get (10)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -299,7 +905,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
-    test("get (3)", async () => {
+    test("get (11)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -318,7 +924,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
-    test("get (4)", async () => {
+    test("get (12)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -337,7 +943,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
-    test("get (5)", async () => {
+    test("get (13)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -356,7 +962,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.NotFoundError);
     });
 
-    test("get (6)", async () => {
+    test("get (14)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -595,15 +1201,404 @@ describe("AuthenticationMethodsClient", () => {
     test("verify (1)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (2)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (3)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (4)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed..." };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (5)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed..." };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (6)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", new_password: "MySecureP@ssw0rd!" };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            new_password: "MySecureP@ssw0rd!",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (7)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {
-            auth_session: "auth_session",
+            auth_session: "Fe26.2**05c400ed...",
             authn_response: {
-                id: "id",
-                rawId: "rawId",
-                response: { attestationObject: "attestationObject", clientDataJSON: "clientDataJSON" },
+                clientExtensionResults: { key: "value" },
+                id: "dGVzdC1jcmVkZW50aWFsLWlk",
+                rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
+                response: {
+                    attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+                    clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh...",
+                },
                 type: "public-key",
             },
         };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            authn_response: {
+                clientExtensionResults: {
+                    key: "value",
+                },
+                id: "dGVzdC1jcmVkZW50aWFsLWlk",
+                rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
+                response: {
+                    attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+                    clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh...",
+                },
+                type: "public-key",
+            },
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (8)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "phone",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            phone_number: "phone_number",
+            preferred_authentication_method: "sms",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (9)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "email",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+            email: "email",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (10)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "totp",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (11)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "push-notification",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+            name: "name",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (12)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "recovery-code",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            confirmed: true,
+            last_auth_at: "2024-01-15T09:30:00Z",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (13)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
             type: "password",
             id: "id",
@@ -623,21 +1618,51 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "auth_session",
-            authn_response: {
-                id: "id",
-                rawId: "rawId",
-                response: {
-                    attestationObject: "attestationObject",
-                    clientDataJSON: "clientDataJSON",
-                },
-                type: "public-key",
-            },
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
         });
         expect(response).toEqual(rawResponseBody);
     });
 
-    test("verify (2)", async () => {
+    test("verify (14)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
+        const rawResponseBody = {
+            type: "passkey",
+            id: "id",
+            created_at: "2024-01-15T09:30:00Z",
+            usage: ["primary"],
+            credential_backed_up: true,
+            credential_device_type: "multi_device",
+            identity_user_id: "identity_user_id",
+            key_id: "key_id",
+            public_key: "public_key",
+            transports: ["internal"],
+            user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
+            user_handle: "user_handle",
+            aaguid: "aaguid",
+            relying_party_id: "relying_party_id",
+            last_auth_at: "2024-01-15T09:30:00Z",
+        };
+
+        server
+            .mockEndpoint()
+            .post("/authentication-methods/authentication_method_id/verify")
+            .jsonBody(rawRequestBody)
+            .respondWith()
+            .statusCode(200)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        const response = await client.authenticationMethods.verify("authentication_method_id", {
+            auth_session: "Fe26.2**05c400ed...",
+            otp_code: "123456",
+        });
+        expect(response).toEqual(rawResponseBody);
+    });
+
+    test("verify (15)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {
@@ -676,7 +1701,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
-    test("verify (3)", async () => {
+    test("verify (16)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {
@@ -715,7 +1740,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
-    test("verify (4)", async () => {
+    test("verify (17)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {
@@ -754,7 +1779,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
-    test("verify (5)", async () => {
+    test("verify (18)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {
@@ -793,7 +1818,7 @@ describe("AuthenticationMethodsClient", () => {
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
 
-    test("verify (6)", async () => {
+    test("verify (19)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {

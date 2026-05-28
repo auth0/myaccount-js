@@ -6,7 +6,7 @@ export interface AuthenticationMethodWebAuthn extends MyAccount.AuthenticationMe
     /** The friendly name of the authentication method */
     name?: string | undefined;
     /** The ID of the credential */
-    key_id: string;
+    key_id?: string | undefined;
     /** The public key */
-    public_key: string;
+    public_key?: string | undefined;
 }
