@@ -1,5 +1,18 @@
 # Change Log
 
+## [v1.0.0-beta.2](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.2) (2026-05-28)
+
+[Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.1...v1.0.0-beta.2)
+
+### Features
+
+- `authenticationMethods.list()` accepts a new optional `type` parameter (typed as `ListAuthenticationMethodsRequestParameters`) to filter results by factor type, e.g., `password`, `passkey`, `email`, `phone`, `totp`, `push-notification`, `recovery-code` [#18](https://github.com/auth0/myaccount-js/pull/18)
+
+### Breaking
+
+- `authenticationMethods.list()` signature changed from `list(requestOptions?)` to `list(request = {}, requestOptions?)`. Callers passing `requestOptions` positionally must update to pass the new `request` argument first [#18](https://github.com/auth0/myaccount-js/pull/18)
+- `AuthenticationMethodWebAuthn.key_id` and `public_key` changed from required `string` to optional `string | undefined` [#18](https://github.com/auth0/myaccount-js/pull/18)
+
 ## [v1.0.0-beta.1](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.1) (2026-04-29)
 
 [Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.0...v1.0.0-beta.1)
