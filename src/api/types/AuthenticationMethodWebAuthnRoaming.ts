@@ -2,4 +2,15 @@
 
 import * as MyAccount from "../index.js";
 
-export interface AuthenticationMethodWebAuthnRoaming extends MyAccount.AuthenticationMethodWebAuthn {}
+export interface AuthenticationMethodWebAuthnRoaming extends MyAccount.AuthenticationMethodWebAuthn {
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodWebAuthnRoaming.Type;
+}
+
+export namespace AuthenticationMethodWebAuthnRoaming {
+    /** Authentication method type (factor) */
+    export const Type = {
+        WebauthnRoaming: "webauthn-roaming",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
+}

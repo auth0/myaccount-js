@@ -9,4 +9,6 @@ export interface PublicKeyCredentialCreationOptions {
     rp: MyAccount.RelyingParty;
     timeout?: number | undefined;
     user: MyAccount.User;
+    /** Existing credentials to exclude from re-registration. */
+    excludeCredentials?: MyAccount.PublicKeyCredentialDescriptor[] | undefined;
 }

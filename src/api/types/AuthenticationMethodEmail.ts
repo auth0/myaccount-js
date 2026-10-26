@@ -5,6 +5,16 @@ import * as MyAccount from "../index.js";
 export interface AuthenticationMethodEmail extends MyAccount.AuthenticationMethodMfaBase {
     /** The friendly name of the authentication method */
     name?: string | undefined;
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodEmail.Type;
     /** The email address used to send verification messages. */
     email: string;
+}
+
+export namespace AuthenticationMethodEmail {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Email: "email",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

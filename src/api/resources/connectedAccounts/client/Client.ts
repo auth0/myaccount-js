@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "../../../../BaseClient.js";
 import * as core from "../../../../core/index.js";
-import { mergeHeaders } from "../../../../core/headers.js";
+import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import { toJson } from "../../../../core/json.js";
 import * as environments from "../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../errors/handleNonStatusCodeError.js";
@@ -59,12 +59,23 @@ export class ConnectedAccountsClient {
         requestOptions?: ConnectedAccountsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.CreateConnectedAccountsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["create:me:connected_accounts"] }] };
+        const {
+            "x-correlation-id": correlationId,
+            traceparent,
+            "x-request-language": requestLanguage,
+            ..._body
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({
+                "x-correlation-id": correlationId,
+                traceparent: traceparent,
+                "x-request-language": requestLanguage,
+            }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -79,7 +90,7 @@ export class ConnectedAccountsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: _body,
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -142,6 +153,7 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.BadRequestError}
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.ConflictError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
      *
@@ -164,12 +176,23 @@ export class ConnectedAccountsClient {
         requestOptions?: ConnectedAccountsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.CompleteConnectedAccountsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["create:me:connected_accounts"] }] };
+        const {
+            "x-correlation-id": correlationId,
+            traceparent,
+            "x-request-language": requestLanguage,
+            ..._body
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({
+                "x-correlation-id": correlationId,
+                traceparent: traceparent,
+                "x-request-language": requestLanguage,
+            }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -184,7 +207,7 @@ export class ConnectedAccountsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: _body,
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -213,6 +236,11 @@ export class ConnectedAccountsClient {
                     );
                 case 403:
                     throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
+                        _response.rawResponse,
+                    );
+                case 409:
+                    throw new MyAccount.ConflictError(
                         _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
@@ -250,11 +278,7 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.connectedAccounts.list({
-     *         connection: "connection",
-     *         from: "from",
-     *         take: 1
-     *     })
+     *     await client.connectedAccounts.list()
      */
     public async list(
         request: MyAccount.ListConnectedAccountsRequestParameters = {},
@@ -267,10 +291,10 @@ export class ConnectedAccountsClient {
                 const _metadata: core.EndpointMetadata = {
                     security: [{ "Bearer-DPoP": ["read:me:connected_accounts"] }],
                 };
-                const { connection, from: from_, take = 10 } = request;
+                const { connection, from: from_, take = 10, "x-correlation-id": correlationId, traceparent } = request;
                 const _queryParams: Record<string, unknown> = {
                     connection:
-                        connection !== undefined
+                        connection != null
                             ? typeof connection === "string"
                                 ? connection
                                 : toJson(connection)
@@ -284,6 +308,7 @@ export class ConnectedAccountsClient {
                 let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
                     _authRequest.headers,
                     this._options?.headers,
+                    mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
                     requestOptions?.headers,
                 );
                 const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -367,7 +392,7 @@ export class ConnectedAccountsClient {
     /**
      * Delete a connected account belonging to the authenticated user.
      *
-     * @param {MyAccount.ConnectedAccountId} id - The unique identifier of the connected account
+     * @param {MyAccount.DeleteConnectedAccountsRequest} request
      * @param {ConnectedAccountsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -376,26 +401,30 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.connectedAccounts.delete("id")
+     *     await client.connectedAccounts.delete({
+     *         id: "id"
+     *     })
      */
     public delete(
-        id: MyAccount.ConnectedAccountId,
+        request: MyAccount.DeleteConnectedAccountsRequest,
         requestOptions?: ConnectedAccountsClient.RequestOptions,
     ): core.HttpResponsePromise<void> {
-        return core.HttpResponsePromise.fromPromise(this.__delete(id, requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__delete(request, requestOptions));
     }
 
     private async __delete(
-        id: MyAccount.ConnectedAccountId,
+        request: MyAccount.DeleteConnectedAccountsRequest,
         requestOptions?: ConnectedAccountsClient.RequestOptions,
     ): Promise<core.WithRawResponse<void>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["delete:me:connected_accounts"] }] };
+        const { id, "x-correlation-id": correlationId, traceparent } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({

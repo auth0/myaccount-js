@@ -3,8 +3,18 @@
 import * as MyAccount from "../index.js";
 
 export interface AuthenticationMethodPassword extends MyAccount.AuthenticationMethodBase {
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodPassword.Type;
     /** The ID of the user identity linked with the authentication method */
     identity_user_id: string;
     /** The date of the last password reset */
     last_password_reset?: string | undefined;
+}
+
+export namespace AuthenticationMethodPassword {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Password: "password",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

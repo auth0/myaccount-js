@@ -2,4 +2,15 @@
 
 import * as MyAccount from "../index.js";
 
-export interface AuthenticationMethodWebAuthnPlatform extends MyAccount.AuthenticationMethodWebAuthn {}
+export interface AuthenticationMethodWebAuthnPlatform extends MyAccount.AuthenticationMethodWebAuthn {
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodWebAuthnPlatform.Type;
+}
+
+export namespace AuthenticationMethodWebAuthnPlatform {
+    /** Authentication method type (factor) */
+    export const Type = {
+        WebauthnPlatform: "webauthn-platform",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
+}

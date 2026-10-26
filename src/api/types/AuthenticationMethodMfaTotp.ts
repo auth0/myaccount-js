@@ -5,4 +5,14 @@ import * as MyAccount from "../index.js";
 export interface AuthenticationMethodMfaTotp extends MyAccount.AuthenticationMethodMfaBase {
     /** The friendly name of the authentication method */
     name?: string | undefined;
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodMfaTotp.Type;
+}
+
+export namespace AuthenticationMethodMfaTotp {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Totp: "totp",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

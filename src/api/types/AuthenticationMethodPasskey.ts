@@ -3,6 +3,8 @@
 import * as MyAccount from "../index.js";
 
 export interface AuthenticationMethodPasskey extends MyAccount.AuthenticationMethodBase {
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodPasskey.Type;
     /** Whether the credential was backed up */
     credential_backed_up: boolean;
     credential_device_type: MyAccount.CredentialDeviceTypeEnum;
@@ -24,4 +26,12 @@ export interface AuthenticationMethodPasskey extends MyAccount.AuthenticationMet
     relying_party_id?: string | undefined;
     /** The date and time when the authentication method was last used */
     last_auth_at?: string | undefined;
+}
+
+export namespace AuthenticationMethodPasskey {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Passkey: "passkey",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

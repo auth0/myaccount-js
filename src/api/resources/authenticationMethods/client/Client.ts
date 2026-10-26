@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "../../../../BaseClient.js";
 import * as core from "../../../../core/index.js";
-import { mergeHeaders } from "../../../../core/headers.js";
+import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import * as environments from "../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../errors/handleNonStatusCodeError.js";
 import * as errors from "../../../../errors/index.js";
@@ -34,9 +34,7 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.list({
-     *         type: "password"
-     *     })
+     *     await client.authenticationMethods.list()
      */
     public list(
         request: MyAccount.ListAuthenticationMethodsRequestParameters = {},
@@ -50,9 +48,9 @@ export class AuthenticationMethodsClient {
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.ListAuthenticationMethodsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }] };
-        const { type: type_ } = request;
+        const { type: type_, "x-correlation-id": correlationId, traceparent } = request;
         const _queryParams: Record<string, unknown> = {
-            type: type_ !== undefined ? type_ : undefined,
+            type: type_ != null ? type_ : undefined,
         };
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
@@ -60,6 +58,7 @@ export class AuthenticationMethodsClient {
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -127,7 +126,7 @@ export class AuthenticationMethodsClient {
     /**
      * Start the enrollment of a supported authentication method.
      *
-     * @param {MyAccount.CreateAuthenticationMethodRequestContent} request
+     * @param {MyAccount.CreateAuthenticationMethodsRequest} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -138,61 +137,80 @@ export class AuthenticationMethodsClient {
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "phone",
-     *         phone_number: "phone_number"
+     *         body: {
+     *             type: "phone",
+     *             phone_number: "+15551234567",
+     *             preferred_authentication_method: "sms"
+     *         }
      *     })
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "email",
-     *         email: "email"
+     *         body: {
+     *             type: "email",
+     *             email: "user@example.com"
+     *         }
      *     })
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "totp"
+     *         body: {
+     *             type: "totp"
+     *         }
      *     })
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "push-notification"
+     *         body: {
+     *             type: "push-notification"
+     *         }
      *     })
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "recovery-code"
+     *         body: {
+     *             type: "recovery-code"
+     *         }
      *     })
      *
      * @example
      *     await client.authenticationMethods.create({
-     *         type: "password"
-     *     })
-     *
-     * @example
-     *     await client.authenticationMethods.create({
-     *         type: "passkey"
+     *         body: {
+     *             type: "passkey"
+     *         }
      *     })
      */
     public create(
-        request: MyAccount.CreateAuthenticationMethodRequestContent,
+        request: MyAccount.CreateAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.CreateAuthenticationMethodResponseContent> {
         return core.HttpResponsePromise.fromPromise(this.__create(request, requestOptions));
     }
 
     private async __create(
-        request: MyAccount.CreateAuthenticationMethodRequestContent,
+        request: MyAccount.CreateAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.CreateAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["create:me:authentication_methods"] }],
         };
+        const {
+            "x-correlation-id": correlationId,
+            traceparent,
+            "x-request-language": requestLanguage,
+            body: _body,
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({
+                "x-correlation-id": correlationId,
+                traceparent: traceparent,
+                "x-request-language": requestLanguage,
+            }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -207,7 +225,7 @@ export class AuthenticationMethodsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: _body,
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -264,7 +282,7 @@ export class AuthenticationMethodsClient {
     /**
      * Retrieves a single authentication method belonging to the authenticated user.
      *
-     * @param {MyAccount.PathAuthenticationMethodId} authentication_method_id - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.GetAuthenticationMethodsRequest} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -274,26 +292,34 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.get("authentication_method_id")
+     *     await client.authenticationMethods.get({
+     *         authentication_method_id: "authentication_method_id"
+     *     })
      */
     public get(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.GetAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.GetAuthenticationMethodResponseContent> {
-        return core.HttpResponsePromise.fromPromise(this.__get(authentication_method_id, requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__get(request, requestOptions));
     }
 
     private async __get(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.GetAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.GetAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:authentication_methods"] }] };
+        const {
+            authentication_method_id: authenticationMethodId,
+            "x-correlation-id": correlationId,
+            traceparent,
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -301,7 +327,7 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "GET",
             headers: _headers,
@@ -367,37 +393,46 @@ export class AuthenticationMethodsClient {
     /**
      * Deletes a single authentication method belonging to the authenticated user.
      *
-     * @param {MyAccount.PathAuthenticationMethodId} authentication_method_id - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
+     * @param {MyAccount.DeleteAuthenticationMethodsRequest} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.ConflictError}
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.delete("authentication_method_id")
+     *     await client.authenticationMethods.delete({
+     *         authentication_method_id: "authentication_method_id"
+     *     })
      */
     public delete(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.DeleteAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<void> {
-        return core.HttpResponsePromise.fromPromise(this.__delete(authentication_method_id, requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__delete(request, requestOptions));
     }
 
     private async __delete(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
+        request: MyAccount.DeleteAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<void>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["delete:me:authentication_methods"] }],
         };
+        const {
+            authentication_method_id: authenticationMethodId,
+            "x-correlation-id": correlationId,
+            traceparent,
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -405,7 +440,7 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "DELETE",
             headers: _headers,
@@ -438,6 +473,11 @@ export class AuthenticationMethodsClient {
                         _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
+                case 409:
+                    throw new MyAccount.ConflictError(
+                        _response.error.body as MyAccount.ErrorResponse,
+                        _response.rawResponse,
+                    );
                 case 429:
                     throw new MyAccount.TooManyRequestsError(
                         _response.error.body as MyAccount.ErrorResponse,
@@ -463,7 +503,6 @@ export class AuthenticationMethodsClient {
     /**
      * Updates a single authentication method
      *
-     * @param {MyAccount.PathAuthenticationMethodId} authentication_method_id - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
      * @param {MyAccount.UpdateAuthenticationMethodRequestContent} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
@@ -474,30 +513,37 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.update("authentication_method_id")
+     *     await client.authenticationMethods.update({
+     *         authentication_method_id: "authentication_method_id"
+     *     })
      */
     public update(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
-        request: MyAccount.UpdateAuthenticationMethodRequestContent = {},
+        request: MyAccount.UpdateAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.UpdateAuthenticationMethodResponseContent> {
-        return core.HttpResponsePromise.fromPromise(this.__update(authentication_method_id, request, requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__update(request, requestOptions));
     }
 
     private async __update(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
-        request: MyAccount.UpdateAuthenticationMethodRequestContent = {},
+        request: MyAccount.UpdateAuthenticationMethodRequestContent,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.UpdateAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["update:me:authentication_methods"] }],
         };
+        const {
+            authentication_method_id: authenticationMethodId,
+            "x-correlation-id": correlationId,
+            traceparent,
+            ..._body
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -505,14 +551,14 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}`,
             ),
             method: "PATCH",
             headers: _headers,
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: _body,
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -574,8 +620,7 @@ export class AuthenticationMethodsClient {
     /**
      * Confirm the enrollment of a supported authentication method.
      *
-     * @param {MyAccount.PathAuthenticationMethodId} authentication_method_id - Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications.
-     * @param {MyAccount.VerifyAuthenticationMethodRequestContent} request
+     * @param {MyAccount.VerifyAuthenticationMethodsRequest} request
      * @param {AuthenticationMethodsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -585,61 +630,78 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.authenticationMethods.verify("authentication_method_id", {
-     *         auth_session: "Fe26.2**05c400ed...",
-     *         otp_code: "123456"
+     *     await client.authenticationMethods.verify({
+     *         authentication_method_id: "authentication_method_id",
+     *         body: {
+     *             auth_session: "Fe26.2**05c400ed...",
+     *             otp_code: "123456"
+     *         }
      *     })
      *
      * @example
-     *     await client.authenticationMethods.verify("authentication_method_id", {
-     *         auth_session: "Fe26.2**05c400ed..."
+     *     await client.authenticationMethods.verify({
+     *         authentication_method_id: "authentication_method_id",
+     *         body: {
+     *             auth_session: "Fe26.2**05c400ed..."
+     *         }
      *     })
      *
      * @example
-     *     await client.authenticationMethods.verify("authentication_method_id", {
-     *         auth_session: "Fe26.2**05c400ed...",
-     *         new_password: "MySecureP@ssw0rd!"
+     *     await client.authenticationMethods.verify({
+     *         authentication_method_id: "authentication_method_id",
+     *         body: {
+     *             auth_session: "Fe26.2**05c400ed...",
+     *             new_password: "MySecureP@ssw0rd!"
+     *         }
      *     })
      *
      * @example
-     *     await client.authenticationMethods.verify("authentication_method_id", {
-     *         auth_session: "Fe26.2**05c400ed...",
-     *         authn_response: {
-     *             clientExtensionResults: {
-     *                 "key": "value"
-     *             },
-     *             id: "dGVzdC1jcmVkZW50aWFsLWlk",
-     *             rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
-     *             response: {
-     *                 attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
-     *                 clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh..."
-     *             },
-     *             type: "public-key"
+     *     await client.authenticationMethods.verify({
+     *         authentication_method_id: "authentication_method_id",
+     *         body: {
+     *             auth_session: "Fe26.2**05c400ed...",
+     *             authn_response: {
+     *                 clientExtensionResults: {
+     *                     "key": "value"
+     *                 },
+     *                 id: "dGVzdC1jcmVkZW50aWFsLWlk",
+     *                 rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
+     *                 response: {
+     *                     attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+     *                     clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh..."
+     *                 },
+     *                 type: "public-key"
+     *             }
      *         }
      *     })
      */
     public verify(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
-        request: MyAccount.VerifyAuthenticationMethodRequestContent,
+        request: MyAccount.VerifyAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.VerifyAuthenticationMethodResponseContent> {
-        return core.HttpResponsePromise.fromPromise(this.__verify(authentication_method_id, request, requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__verify(request, requestOptions));
     }
 
     private async __verify(
-        authentication_method_id: MyAccount.PathAuthenticationMethodId,
-        request: MyAccount.VerifyAuthenticationMethodRequestContent,
+        request: MyAccount.VerifyAuthenticationMethodsRequest,
         requestOptions?: AuthenticationMethodsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.VerifyAuthenticationMethodResponseContent>> {
         const _metadata: core.EndpointMetadata = {
             security: [{ "Bearer-DPoP": ["create:me:authentication_methods"] }],
         };
+        const {
+            authentication_method_id: authenticationMethodId,
+            "x-correlation-id": correlationId,
+            traceparent,
+            body: _body,
+        } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({
@@ -647,14 +709,14 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}/verify`,
+                `authentication-methods/${core.url.encodePathParam(authenticationMethodId)}/verify`,
             ),
             method: "POST",
             headers: _headers,
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: _body,
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,

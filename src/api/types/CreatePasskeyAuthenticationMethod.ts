@@ -2,4 +2,17 @@
 
 import * as MyAccount from "../index.js";
 
-export interface CreatePasskeyAuthenticationMethod extends MyAccount.IdentityAuthenticationMethodBase {}
+export interface CreatePasskeyAuthenticationMethod extends MyAccount.IdentityAuthenticationMethodBase {
+    /** Authentication method type (factor) */
+    type: CreatePasskeyAuthenticationMethod.Type;
+    /** When enabled, Auth0 includes the user's existing credentials in the excludeCredentials field during passkey enrollment. This prevents users from accidentally registering multiple passkeys from the same authenticator, reducing credential clutter and avoiding confusion at sign-in. */
+    use_exclude_credentials?: boolean | undefined;
+}
+
+export namespace CreatePasskeyAuthenticationMethod {
+    /** Authentication method type (factor) */
+    export const Type = {
+        Passkey: "passkey",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
+}

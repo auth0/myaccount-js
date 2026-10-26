@@ -4,24 +4,188 @@ import * as MyAccount from "../index.js";
 
 /**
  * @example
- *     {
- *         type: "password"
- *     }
+ *     {}
  */
-export interface ListAuthenticationMethodsRequestParameters {
-    /** Filter authentication methods by type */
-    type?: MyAccount.FactorTypeEnum | null;
+export interface ListFactorsRequest {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
 }
 
 /**
  * @example
  *     {}
  */
+export interface ListAuthenticationMethodsRequestParameters {
+    /** Filter authentication methods by type */
+    type?: MyAccount.FactorTypeEnum;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         body: {
+ *             type: "phone",
+ *             phone_number: "+15551234567",
+ *             preferred_authentication_method: "sms"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         body: {
+ *             type: "email",
+ *             email: "user@example.com"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         body: {
+ *             type: "totp"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         body: {
+ *             type: "push-notification"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         body: {
+ *             type: "recovery-code"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         body: {
+ *             type: "passkey"
+ *         }
+ *     }
+ */
+export interface CreateAuthenticationMethodsRequest {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    /** Specifies the language used for localized content generated while handling the request (such as OTP email or SMS messages), using one of the tenant's configured Supported Languages. */
+    "x-request-language"?: string;
+    body: MyAccount.CreateAuthenticationMethodRequestContent;
+}
+
+/**
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id"
+ *     }
+ */
+export interface GetAuthenticationMethodsRequest {
+    /** Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications. */
+    authentication_method_id: MyAccount.PathAuthenticationMethodId;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id"
+ *     }
+ */
+export interface DeleteAuthenticationMethodsRequest {
+    /** Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications. */
+    authentication_method_id: MyAccount.PathAuthenticationMethodId;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id"
+ *     }
+ */
 export interface UpdateAuthenticationMethodRequestContent {
+    /** Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications. */
+    authentication_method_id: MyAccount.PathAuthenticationMethodId;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
     /** The friendly name of the authentication method */
     name?: string;
     /** The preferred authentication method (for phone authenticators) */
     preferred_authentication_method?: MyAccount.PhoneAuthenticationMethodEnum;
+}
+
+/**
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id",
+ *         body: {
+ *             auth_session: "Fe26.2**05c400ed...",
+ *             otp_code: "123456"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id",
+ *         body: {
+ *             auth_session: "Fe26.2**05c400ed..."
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id",
+ *         body: {
+ *             auth_session: "Fe26.2**05c400ed...",
+ *             new_password: "MySecureP@ssw0rd!"
+ *         }
+ *     }
+ *
+ * @example
+ *     {
+ *         authentication_method_id: "authentication_method_id",
+ *         body: {
+ *             auth_session: "Fe26.2**05c400ed...",
+ *             authn_response: {
+ *                 clientExtensionResults: {
+ *                     "key": "value"
+ *                 },
+ *                 id: "dGVzdC1jcmVkZW50aWFsLWlk",
+ *                 rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
+ *                 response: {
+ *                     attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+ *                     clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh..."
+ *                 },
+ *                 type: "public-key"
+ *             }
+ *         }
+ *     }
+ */
+export interface VerifyAuthenticationMethodsRequest {
+    /** Authentication Method ID. This value is part of the Location header returned when creating an authentication method. It should be used as it is, without any modifications. */
+    authentication_method_id: MyAccount.PathAuthenticationMethodId;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    body: MyAccount.VerifyAuthenticationMethodRequestContent;
 }
 
 /**
@@ -32,6 +196,12 @@ export interface UpdateAuthenticationMethodRequestContent {
  *     }
  */
 export interface CreateConnectedAccountsRequestContent {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    /** Specifies the language used for localized content generated while handling the request (such as OTP email or SMS messages), using one of the tenant's configured Supported Languages. */
+    "x-request-language"?: string;
     /** The name of the connection to link the account with (e.g., 'google-oauth2', 'facebook'). */
     connection: string;
     /** The URI to redirect to after the connection process completes. */
@@ -64,6 +234,12 @@ export namespace CreateConnectedAccountsRequestContent {
  *     }
  */
 export interface CompleteConnectedAccountsRequestContent {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    /** Specifies the language used for localized content generated while handling the request (such as OTP email or SMS messages), using one of the tenant's configured Supported Languages. */
+    "x-request-language"?: string;
     /** The authentication session identifier */
     auth_session: string;
     /** The authorization code returned from the connect flow */
@@ -76,31 +252,220 @@ export interface CompleteConnectedAccountsRequestContent {
 
 /**
  * @example
- *     {
- *         connection: "connection",
- *         from: "from",
- *         take: 1
- *     }
+ *     {}
  */
 export interface ListConnectedAccountsRequestParameters {
     /** Filter connected accounts by connection names */
-    connection?: MyAccount.ConnectionNamesFilter | null;
+    connection?: MyAccount.ConnectionNamesFilter;
     /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
+    from?: string;
     /** Number of results to return (1-20) */
-    take?: number | null;
+    take?: number;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
 }
 
 /**
  * @example
  *     {
- *         from: "from",
- *         take: 1
+ *         id: "id"
  *     }
+ */
+export interface DeleteConnectedAccountsRequest {
+    /** The unique identifier of the connected account */
+    id: MyAccount.ConnectedAccountId;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {}
+ */
+export interface GetConsentsRequestParameters {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         consent_id: "consent_id"
+ *     }
+ */
+export interface GetConsentRequestParameters {
+    /** The ID of the consent to retrieve */
+    consent_id: string;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         consent_id: "consent_id",
+ *         decision: "approve"
+ *     }
+ *
+ * @example
+ *     {
+ *         consent_id: "consent_id",
+ *         decision: "approve",
+ *         signature: "<compact JWS over the signed payload>",
+ *         kid: "csk_72jbvv7LfRKYp59gtRLtkn"
+ *     }
+ *
+ * @example
+ *     {
+ *         consent_id: "consent_id",
+ *         decision: "approve",
+ *         signature: "<compact JWS over the signed payload>",
+ *         kid: "csk_72jbvv7LfRKYp59gtRLtkn",
+ *         challenge_response: "<challenge response JWT built by the Guardian SDK>"
+ *     }
+ *
+ * @example
+ *     {
+ *         consent_id: "consent_id",
+ *         decision: "deny"
+ *     }
+ */
+export interface DecideConsentRequestParameters {
+    /** The ID of the consent to retrieve */
+    consent_id: string;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    decision: MyAccount.ConsentDecisionEnum;
+    /** Compact JWS serialization of the signed consent payload, produced by the device. Must be provided together with `kid`. */
+    signature?: string;
+    /** Key ID of the registered consent signing key used to produce `signature`. Must be provided together with `signature`. */
+    kid?: string;
+    /** Challenge response JWT that the device builds with the Guardian SDK from the consent's `challenge`. Send it when the consent was initiated through a push notification, to resolve the associated MFA transaction. */
+    challenge_response?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         jwk: {
+ *             kty: "EC",
+ *             crv: "P-256",
+ *             alg: "ES256",
+ *             use: "sig",
+ *             x: "x",
+ *             y: "y"
+ *         },
+ *         device_identifier: "device_identifier"
+ *     }
+ */
+export interface CreateConsentSigningKeyRequestContent {
+    jwk: MyAccount.ConsentSigningKeyJwkRequest;
+    /** A human-readable label for the device holding the corresponding private key. This is a label only and is not a guarantee that the key is bound to that device. */
+    device_identifier: string;
+    /** When the key should expire. Optional; defaults to the maximum 2 year lifetime. Must be at least 1 hour in the future and no later than the default. */
+    expires_at?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         kid: "kid"
+ *     }
+ */
+export interface GetConsentSigningKeyRequestParameters {
+    /** The identifier of the consent signing key. This value is returned as `kid` when the key is registered. */
+    kid: string;
+}
+
+/**
+ * @example
+ *     {
+ *         kid: "kid"
+ *     }
+ */
+export interface DeleteConsentSigningKeyRequestParameters {
+    /** The identifier of the consent signing key. This value is returned as `kid` when the key is registered. */
+    kid: string;
+}
+
+/**
+ * @example
+ *     {}
+ */
+export interface ListOrganizationsRequestParameters {
+    /** Cursor for pagination - start retrieving results from this point */
+    from?: string;
+    /** Number of results to return (1-100) */
+    take?: number;
+}
+
+/**
+ * @example
+ *     {
+ *         name: "name"
+ *     }
+ */
+export interface CreateOrganizationRequestContent {
+    /** The name (slug) of the organization. May contain only lowercase letters, digits, hyphens, and underscores, must start and end with a letter or digit, and cannot start with 'org_'. */
+    name: string;
+    /** The human-readable display name of the organization. */
+    display_name?: string;
+    branding?: MyAccount.OrganizationBranding;
+}
+
+/**
+ * @example
+ *     {}
+ */
+export interface GetProfileRequestParameters {
+    /** Comma-separated list of field names to include or exclude (depending on include_fields). */
+    fields?: MyAccount.ProfileFieldEnum | MyAccount.ProfileFieldEnum[];
+    /** When true (default), return only the fields named in fields. When false, return all fields except those named in fields. Ignored when fields is absent. */
+    include_fields?: MyAccount.IncludeFieldsEnum;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+}
+
+/**
+ * @example
+ *     {}
+ */
+export interface PatchProfileRequestContent {
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
+    given_name?: MyAccount.SafeString150;
+    family_name?: MyAccount.SafeString150;
+    name?: MyAccount.SafeString300;
+    nickname?: MyAccount.SafeString300;
+    picture?: MyAccount.SafeUri;
+    user_metadata?: MyAccount.UserMetadata;
+}
+
+/**
+ * @example
+ *     {}
  */
 export interface ListConnectedAccountsConnectionsRequestParameters {
     /** Cursor for pagination - start retrieving results from this point */
-    from?: string | null;
+    from?: string;
     /** Number of results to return (1-20) */
-    take?: number | null;
+    take?: number;
+    /** A client-provided unique identifier for a single operation, used to correlate the request across Auth0 systems. The value is surfaced under `references.correlation_id` in tenant logs and echoed back on the response's `x-correlation-id` header. Invalid or oversized values are silently dropped and replaced by a generated UUID v4. Avoid including personally identifiable information (PII). */
+    "x-correlation-id"?: string;
+    /** A [W3C Trace Context](https://www.w3.org/TR/trace-context/) header used to correlate the request across distributed traces. When supplied, the inbound trace is continued and a fresh child span is echoed back on the response's `traceparent` header; the trace ID is also surfaced under `references.trace_id` in tenant logs. Malformed values are ignored. */
+    traceparent?: string;
 }

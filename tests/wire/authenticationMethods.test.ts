@@ -12,81 +12,81 @@ describe("AuthenticationMethodsClient", () => {
         const rawResponseBody = {
             authentication_methods: [
                 {
-                    type: "email",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
-                    usage: ["primary"],
+                    id: "email|dev_XXXXXXXXXXXXXXXX",
+                    created_at: "2025-01-15T10:30:00Z",
+                    usage: ["secondary"],
                     confirmed: true,
                     last_auth_at: "2024-01-15T09:30:00Z",
                     name: "name",
-                    email: "email",
+                    type: "email",
+                    email: "user@example.com",
                 },
                 {
-                    type: "phone",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
-                    usage: ["primary"],
+                    id: "phone|dev_YYYYYYYYYYYYYYYY",
+                    created_at: "2025-01-16T14:00:00Z",
+                    usage: ["secondary"],
                     confirmed: true,
                     last_auth_at: "2024-01-15T09:30:00Z",
                     name: "name",
-                    phone_number: "phone_number",
+                    type: "phone",
+                    phone_number: "+15551234567",
                     preferred_authentication_method: "sms",
                 },
                 {
-                    type: "totp",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
-                    usage: ["primary"],
+                    id: "totp|dev_ZZZZZZZZZZZZZZZZ",
+                    created_at: "2025-02-01T09:15:00Z",
+                    usage: ["secondary"],
                     confirmed: true,
                     last_auth_at: "2024-01-15T09:30:00Z",
                     name: "name",
+                    type: "totp",
                 },
                 {
-                    type: "passkey",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
+                    id: "passkey|dev_AAAAAAAAAAAAAAAA",
+                    created_at: "2025-03-10T08:00:00Z",
                     usage: ["primary"],
+                    type: "passkey",
                     credential_backed_up: true,
                     credential_device_type: "multi_device",
-                    identity_user_id: "identity_user_id",
-                    key_id: "key_id",
-                    public_key: "public_key",
+                    identity_user_id: "auth0|507f1f77bcf86cd799439011",
+                    key_id: "dGVzdC1rZXktaWQ",
+                    public_key: "pQECAyYgASFYI...",
                     transports: ["internal"],
                     user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
-                    user_handle: "user_handle",
+                    user_handle: "YXV0aDB8NTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDEx",
                     aaguid: "aaguid",
-                    relying_party_id: "relying_party_id",
+                    relying_party_id: "example.auth0.com",
                     last_auth_at: "2024-01-15T09:30:00Z",
                 },
                 {
-                    type: "password",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
+                    id: "password|dXNlci0xMjM",
+                    created_at: "2024-06-01T12:00:00Z",
                     usage: ["primary"],
-                    identity_user_id: "identity_user_id",
+                    type: "password",
+                    identity_user_id: "auth0|507f1f77bcf86cd799439011",
                     last_password_reset: "2024-01-15T09:30:00Z",
                 },
                 {
-                    type: "webauthn-platform",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
-                    usage: ["primary"],
+                    id: "webauthn-platform|dev_BBBBBBBBBBBBBBBB",
+                    created_at: "2025-02-20T11:00:00Z",
+                    usage: ["secondary"],
                     confirmed: true,
                     last_auth_at: "2024-01-15T09:30:00Z",
                     name: "name",
-                    key_id: "key_id",
-                    public_key: "public_key",
+                    key_id: "dGVzdC1wbGF0Zm9ybS1rZXk",
+                    public_key: "pQECAyYgASFYI...",
+                    type: "webauthn-platform",
                 },
                 {
-                    type: "webauthn-roaming",
-                    id: "id",
-                    created_at: "2024-01-15T09:30:00Z",
-                    usage: ["primary"],
+                    id: "webauthn-roaming|dev_CCCCCCCCCCCCCCCC",
+                    created_at: "2025-02-25T16:45:00Z",
+                    usage: ["secondary"],
                     confirmed: true,
                     last_auth_at: "2024-01-15T09:30:00Z",
                     name: "name",
-                    key_id: "key_id",
-                    public_key: "public_key",
+                    key_id: "dGVzdC1yb2FtaW5nLWtleQ",
+                    public_key: "pQECAyYgASFYI...",
+                    type: "webauthn-roaming",
                 },
             ],
         };
@@ -99,9 +99,7 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.list({
-            type: "password",
-        });
+        const response = await client.authenticationMethods.list();
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -184,7 +182,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (1)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
@@ -197,8 +195,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -206,7 +207,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (2)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "email", email: "email" };
+        const rawRequestBody = { type: "email", email: "user@example.com" };
         const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
@@ -219,8 +220,10 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "email",
-            email: "email",
+            body: {
+                type: "email",
+                email: "user@example.com",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -241,7 +244,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "totp",
+            body: {
+                type: "totp",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -262,7 +267,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "push-notification",
+            body: {
+                type: "push-notification",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -283,7 +290,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "recovery-code",
+            body: {
+                type: "recovery-code",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -291,7 +300,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (6)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "password" };
+        const rawRequestBody = { type: "totp" };
         const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
@@ -304,7 +313,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "password",
+            body: {
+                type: "totp",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -325,7 +336,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "passkey",
+            body: {
+                type: "passkey",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -333,7 +346,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (8)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = { id: "phone|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
@@ -346,8 +359,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -355,7 +371,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (9)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = { id: "email|dev_XXXXXXXXXXXXXXXX", auth_session: "Fe26.2**05c400ed..." };
 
         server
@@ -368,8 +384,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -377,7 +396,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (10)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = {
             id: "totp|dev_XXXXXXXXXXXXXXXX",
             auth_session: "Fe26.2**05c400ed...",
@@ -396,8 +415,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -405,7 +427,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (11)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = {
             id: "push-notification|dev_XXXXXXXXXXXXXXXX",
             auth_session: "Fe26.2**05c400ed...",
@@ -424,8 +446,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -433,7 +458,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (12)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = {
             id: "recovery-code|dev_XXXXXXXXXXXXXXXX",
             auth_session: "Fe26.2**05c400ed...",
@@ -450,8 +475,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -459,7 +487,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (13)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = {
             id: "password|new",
             policy: {
@@ -488,8 +516,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -497,7 +528,7 @@ describe("AuthenticationMethodsClient", () => {
     test("create (14)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
-        const rawRequestBody = { type: "phone", phone_number: "phone_number" };
+        const rawRequestBody = { type: "phone", phone_number: "+15551234567", preferred_authentication_method: "sms" };
         const rawResponseBody = {
             auth_session: "Fe26.2**05c400ed...",
             authn_params_public_key: {
@@ -510,6 +541,7 @@ describe("AuthenticationMethodsClient", () => {
                 rp: { id: "example.auth0.com", name: "My Application" },
                 timeout: 60000,
                 user: { id: "YXV0aDB8NTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDEx", name: "user@example.com", displayName: "User" },
+                excludeCredentials: [{ id: "id", type: "public-key" }],
             },
         };
 
@@ -523,8 +555,11 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         const response = await client.authenticationMethods.create({
-            type: "phone",
-            phone_number: "phone_number",
+            body: {
+                type: "phone",
+                phone_number: "+15551234567",
+                preferred_authentication_method: "sms",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -546,7 +581,9 @@ describe("AuthenticationMethodsClient", () => {
 
         await expect(async () => {
             return await client.authenticationMethods.create({
-                type: "passkey",
+                body: {
+                    type: "passkey",
+                },
             });
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
@@ -568,7 +605,9 @@ describe("AuthenticationMethodsClient", () => {
 
         await expect(async () => {
             return await client.authenticationMethods.create({
-                type: "passkey",
+                body: {
+                    type: "passkey",
+                },
             });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
@@ -590,7 +629,9 @@ describe("AuthenticationMethodsClient", () => {
 
         await expect(async () => {
             return await client.authenticationMethods.create({
-                type: "passkey",
+                body: {
+                    type: "passkey",
+                },
             });
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
@@ -612,7 +653,9 @@ describe("AuthenticationMethodsClient", () => {
 
         await expect(async () => {
             return await client.authenticationMethods.create({
-                type: "passkey",
+                body: {
+                    type: "passkey",
+                },
             });
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
@@ -634,7 +677,9 @@ describe("AuthenticationMethodsClient", () => {
 
         await expect(async () => {
             return await client.authenticationMethods.create({
-                type: "passkey",
+                body: {
+                    type: "passkey",
+                },
             });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);
     });
@@ -644,14 +689,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -663,7 +708,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -672,14 +719,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "email",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "email|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            email: "email",
+            type: "email",
+            email: "user@example.com",
         };
 
         server
@@ -690,7 +737,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -699,13 +748,13 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "totp",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "totp|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
+            type: "totp",
         };
 
         server
@@ -716,7 +765,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -725,13 +776,13 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "push-notification",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "push-notification|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
+            type: "push-notification",
         };
 
         server
@@ -742,7 +793,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -751,12 +804,12 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "recovery-code",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "recovery-code|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
+            type: "recovery-code",
         };
 
         server
@@ -767,7 +820,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -776,11 +831,11 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "password",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
+            id: "password|dXNlci0xMjM",
+            created_at: "2024-06-01T12:00:00Z",
             usage: ["primary"],
-            identity_user_id: "identity_user_id",
+            type: "password",
+            identity_user_id: "auth0|507f1f77bcf86cd799439011",
             last_password_reset: "2024-01-15T09:30:00Z",
         };
 
@@ -792,7 +847,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -801,20 +858,20 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "passkey",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
+            id: "passkey|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-03-10T08:00:00Z",
             usage: ["primary"],
+            type: "passkey",
             credential_backed_up: true,
             credential_device_type: "multi_device",
-            identity_user_id: "identity_user_id",
-            key_id: "key_id",
-            public_key: "public_key",
+            identity_user_id: "auth0|507f1f77bcf86cd799439011",
+            key_id: "dGVzdC1jcmVkZW50aWFsLWlk",
+            public_key: "pQECAyYgASFYI...",
             transports: ["internal"],
             user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
-            user_handle: "user_handle",
+            user_handle: "YXV0aDB8NTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDEx",
             aaguid: "aaguid",
-            relying_party_id: "relying_party_id",
+            relying_party_id: "example.auth0.com",
             last_auth_at: "2024-01-15T09:30:00Z",
         };
 
@@ -826,7 +883,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -835,15 +894,15 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "webauthn-platform",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "webauthn-platform|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-02-20T11:00:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            key_id: "key_id",
-            public_key: "public_key",
+            key_id: "dGVzdC1wbGF0Zm9ybS1rZXk",
+            public_key: "pQECAyYgASFYI...",
+            type: "webauthn-platform",
         };
 
         server
@@ -854,7 +913,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -863,15 +924,15 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
         const rawResponseBody = {
-            type: "webauthn-roaming",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "webauthn-roaming|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-02-25T16:45:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            key_id: "key_id",
-            public_key: "public_key",
+            key_id: "dGVzdC1yb2FtaW5nLWtleQ",
+            public_key: "pQECAyYgASFYI...",
+            type: "webauthn-roaming",
         };
 
         server
@@ -882,7 +943,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.get("authentication_method_id");
+        const response = await client.authenticationMethods.get({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -901,7 +964,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.get("authentication_method_id");
+            return await client.authenticationMethods.get({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
@@ -920,7 +985,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.get("authentication_method_id");
+            return await client.authenticationMethods.get({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
@@ -939,7 +1006,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.get("authentication_method_id");
+            return await client.authenticationMethods.get({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
@@ -958,7 +1027,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.get("authentication_method_id");
+            return await client.authenticationMethods.get({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.NotFoundError);
     });
 
@@ -977,7 +1048,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.get("authentication_method_id");
+            return await client.authenticationMethods.get({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);
     });
 
@@ -992,7 +1065,9 @@ describe("AuthenticationMethodsClient", () => {
             .statusCode(200)
             .build();
 
-        const response = await client.authenticationMethods.delete("authentication_method_id");
+        const response = await client.authenticationMethods.delete({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(undefined);
     });
 
@@ -1011,7 +1086,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.delete("authentication_method_id");
+            return await client.authenticationMethods.delete({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
@@ -1030,7 +1107,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.delete("authentication_method_id");
+            return await client.authenticationMethods.delete({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
@@ -1049,11 +1128,34 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.delete("authentication_method_id");
+            return await client.authenticationMethods.delete({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
     test("delete (5)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
+
+        server
+            .mockEndpoint()
+            .delete("/authentication-methods/authentication_method_id")
+            .respondWith()
+            .statusCode(409)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        await expect(async () => {
+            return await client.authenticationMethods.delete({
+                authentication_method_id: "authentication_method_id",
+            });
+        }).rejects.toThrow(MyAccount.ConflictError);
+    });
+
+    test("delete (6)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
 
@@ -1068,7 +1170,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.delete("authentication_method_id");
+            return await client.authenticationMethods.delete({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);
     });
 
@@ -1077,10 +1181,10 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = {};
         const rawResponseBody = {
-            type: "password",
             id: "id",
             created_at: "2024-01-15T09:30:00Z",
             usage: ["primary"],
+            type: "password",
             identity_user_id: "identity_user_id",
             last_password_reset: "2024-01-15T09:30:00Z",
         };
@@ -1094,7 +1198,9 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.update("authentication_method_id");
+        const response = await client.authenticationMethods.update({
+            authentication_method_id: "authentication_method_id",
+        });
         expect(response).toEqual(rawResponseBody);
     });
 
@@ -1114,7 +1220,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.update("authentication_method_id");
+            return await client.authenticationMethods.update({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.BadRequestError);
     });
 
@@ -1134,7 +1242,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.update("authentication_method_id");
+            return await client.authenticationMethods.update({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
     });
 
@@ -1154,7 +1264,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.update("authentication_method_id");
+            return await client.authenticationMethods.update({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.ForbiddenError);
     });
 
@@ -1174,7 +1286,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.update("authentication_method_id");
+            return await client.authenticationMethods.update({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
 
@@ -1194,7 +1308,9 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.update("authentication_method_id");
+            return await client.authenticationMethods.update({
+                authentication_method_id: "authentication_method_id",
+            });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);
     });
 
@@ -1203,14 +1319,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1223,9 +1339,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1235,14 +1354,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1255,9 +1374,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1267,14 +1389,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1287,9 +1409,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1299,14 +1424,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed..." };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1319,8 +1444,11 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1330,14 +1458,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed..." };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1350,8 +1478,11 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1361,14 +1492,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", new_password: "MySecureP@ssw0rd!" };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1381,9 +1512,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            new_password: "MySecureP@ssw0rd!",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                new_password: "MySecureP@ssw0rd!",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1405,14 +1539,14 @@ describe("AuthenticationMethodsClient", () => {
             },
         };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1425,19 +1559,22 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            authn_response: {
-                clientExtensionResults: {
-                    key: "value",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                authn_response: {
+                    clientExtensionResults: {
+                        key: "value",
+                    },
+                    id: "dGVzdC1jcmVkZW50aWFsLWlk",
+                    rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
+                    response: {
+                        attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
+                        clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh...",
+                    },
+                    type: "public-key",
                 },
-                id: "dGVzdC1jcmVkZW50aWFsLWlk",
-                rawId: "dGVzdC1jcmVkZW50aWFsLWlk",
-                response: {
-                    attestationObject: "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YQ...",
-                    clientDataJSON: "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hh...",
-                },
-                type: "public-key",
             },
         });
         expect(response).toEqual(rawResponseBody);
@@ -1448,14 +1585,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "phone",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "phone|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            phone_number: "phone_number",
+            type: "phone",
+            phone_number: "+15551234567",
             preferred_authentication_method: "sms",
         };
 
@@ -1468,9 +1605,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1480,14 +1620,14 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "email",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "email|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
-            email: "email",
+            type: "email",
+            email: "user@example.com",
         };
 
         server
@@ -1499,9 +1639,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1511,13 +1654,13 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "totp",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "totp|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
+            type: "totp",
         };
 
         server
@@ -1529,9 +1672,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1541,13 +1687,13 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "push-notification",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "push-notification|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
             name: "name",
+            type: "push-notification",
         };
 
         server
@@ -1559,9 +1705,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1571,12 +1720,12 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "recovery-code",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
-            usage: ["primary"],
+            id: "recovery-code|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
+            usage: ["secondary"],
             confirmed: true,
             last_auth_at: "2024-01-15T09:30:00Z",
+            type: "recovery-code",
         };
 
         server
@@ -1588,9 +1737,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1600,11 +1752,11 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "password",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
+            id: "password|dXNlci0xMjM",
+            created_at: "2025-01-15T10:30:00Z",
             usage: ["primary"],
-            identity_user_id: "identity_user_id",
+            type: "password",
+            identity_user_id: "auth0|507f1f77bcf86cd799439011",
             last_password_reset: "2024-01-15T09:30:00Z",
         };
 
@@ -1617,9 +1769,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1629,20 +1784,20 @@ describe("AuthenticationMethodsClient", () => {
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "Fe26.2**05c400ed...", otp_code: "123456" };
         const rawResponseBody = {
-            type: "passkey",
-            id: "id",
-            created_at: "2024-01-15T09:30:00Z",
+            id: "passkey|dev_XXXXXXXXXXXXXXXX",
+            created_at: "2025-01-15T10:30:00Z",
             usage: ["primary"],
+            type: "passkey",
             credential_backed_up: true,
             credential_device_type: "multi_device",
-            identity_user_id: "identity_user_id",
-            key_id: "key_id",
-            public_key: "public_key",
+            identity_user_id: "auth0|507f1f77bcf86cd799439011",
+            key_id: "dGVzdC1jcmVkZW50aWFsLWlk",
+            public_key: "pQECAyYgASFYI...",
             transports: ["internal"],
             user_agent: "Chrome 131.0.0 / Mac OS X 10.15.7",
-            user_handle: "user_handle",
+            user_handle: "YXV0aDB8NTA3ZjFmNzdiY2Y4NmNkNzk5NDM5MDEx",
             aaguid: "aaguid",
-            relying_party_id: "relying_party_id",
+            relying_party_id: "example.auth0.com",
             last_auth_at: "2024-01-15T09:30:00Z",
         };
 
@@ -1655,9 +1810,12 @@ describe("AuthenticationMethodsClient", () => {
             .jsonBody(rawResponseBody)
             .build();
 
-        const response = await client.authenticationMethods.verify("authentication_method_id", {
-            auth_session: "Fe26.2**05c400ed...",
-            otp_code: "123456",
+        const response = await client.authenticationMethods.verify({
+            authentication_method_id: "authentication_method_id",
+            body: {
+                auth_session: "Fe26.2**05c400ed...",
+                otp_code: "123456",
+            },
         });
         expect(response).toEqual(rawResponseBody);
     });
@@ -1686,16 +1844,19 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.verify("authentication_method_id", {
-                auth_session: "auth_session",
-                authn_response: {
-                    id: "id",
-                    rawId: "rawId",
-                    response: {
-                        attestationObject: "attestationObject",
-                        clientDataJSON: "clientDataJSON",
+            return await client.authenticationMethods.verify({
+                authentication_method_id: "authentication_method_id",
+                body: {
+                    auth_session: "auth_session",
+                    authn_response: {
+                        id: "id",
+                        rawId: "rawId",
+                        response: {
+                            attestationObject: "attestationObject",
+                            clientDataJSON: "clientDataJSON",
+                        },
+                        type: "public-key",
                     },
-                    type: "public-key",
                 },
             });
         }).rejects.toThrow(MyAccount.BadRequestError);
@@ -1725,16 +1886,19 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.verify("authentication_method_id", {
-                auth_session: "auth_session",
-                authn_response: {
-                    id: "id",
-                    rawId: "rawId",
-                    response: {
-                        attestationObject: "attestationObject",
-                        clientDataJSON: "clientDataJSON",
+            return await client.authenticationMethods.verify({
+                authentication_method_id: "authentication_method_id",
+                body: {
+                    auth_session: "auth_session",
+                    authn_response: {
+                        id: "id",
+                        rawId: "rawId",
+                        response: {
+                            attestationObject: "attestationObject",
+                            clientDataJSON: "clientDataJSON",
+                        },
+                        type: "public-key",
                     },
-                    type: "public-key",
                 },
             });
         }).rejects.toThrow(MyAccount.UnauthorizedError);
@@ -1764,16 +1928,19 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.verify("authentication_method_id", {
-                auth_session: "auth_session",
-                authn_response: {
-                    id: "id",
-                    rawId: "rawId",
-                    response: {
-                        attestationObject: "attestationObject",
-                        clientDataJSON: "clientDataJSON",
+            return await client.authenticationMethods.verify({
+                authentication_method_id: "authentication_method_id",
+                body: {
+                    auth_session: "auth_session",
+                    authn_response: {
+                        id: "id",
+                        rawId: "rawId",
+                        response: {
+                            attestationObject: "attestationObject",
+                            clientDataJSON: "clientDataJSON",
+                        },
+                        type: "public-key",
                     },
-                    type: "public-key",
                 },
             });
         }).rejects.toThrow(MyAccount.ForbiddenError);
@@ -1803,16 +1970,19 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.verify("authentication_method_id", {
-                auth_session: "auth_session",
-                authn_response: {
-                    id: "id",
-                    rawId: "rawId",
-                    response: {
-                        attestationObject: "attestationObject",
-                        clientDataJSON: "clientDataJSON",
+            return await client.authenticationMethods.verify({
+                authentication_method_id: "authentication_method_id",
+                body: {
+                    auth_session: "auth_session",
+                    authn_response: {
+                        id: "id",
+                        rawId: "rawId",
+                        response: {
+                            attestationObject: "attestationObject",
+                            clientDataJSON: "clientDataJSON",
+                        },
+                        type: "public-key",
                     },
-                    type: "public-key",
                 },
             });
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
@@ -1842,16 +2012,19 @@ describe("AuthenticationMethodsClient", () => {
             .build();
 
         await expect(async () => {
-            return await client.authenticationMethods.verify("authentication_method_id", {
-                auth_session: "auth_session",
-                authn_response: {
-                    id: "id",
-                    rawId: "rawId",
-                    response: {
-                        attestationObject: "attestationObject",
-                        clientDataJSON: "clientDataJSON",
+            return await client.authenticationMethods.verify({
+                authentication_method_id: "authentication_method_id",
+                body: {
+                    auth_session: "auth_session",
+                    authn_response: {
+                        id: "id",
+                        rawId: "rawId",
+                        response: {
+                            attestationObject: "attestationObject",
+                            clientDataJSON: "clientDataJSON",
+                        },
+                        type: "public-key",
                     },
-                    type: "public-key",
                 },
             });
         }).rejects.toThrow(MyAccount.TooManyRequestsError);

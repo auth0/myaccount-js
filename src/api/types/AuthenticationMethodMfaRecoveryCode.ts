@@ -2,4 +2,15 @@
 
 import * as MyAccount from "../index.js";
 
-export interface AuthenticationMethodMfaRecoveryCode extends MyAccount.AuthenticationMethodMfaBase {}
+export interface AuthenticationMethodMfaRecoveryCode extends MyAccount.AuthenticationMethodMfaBase {
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodMfaRecoveryCode.Type;
+}
+
+export namespace AuthenticationMethodMfaRecoveryCode {
+    /** Authentication method type (factor) */
+    export const Type = {
+        RecoveryCode: "recovery-code",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
+}

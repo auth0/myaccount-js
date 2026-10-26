@@ -5,4 +5,14 @@ import * as MyAccount from "../index.js";
 export interface AuthenticationMethodMfaPushNotification extends MyAccount.AuthenticationMethodMfaBase {
     /** The friendly name of the authentication method */
     name?: string | undefined;
+    /** Authentication method type (factor) */
+    type: AuthenticationMethodMfaPushNotification.Type;
+}
+
+export namespace AuthenticationMethodMfaPushNotification {
+    /** Authentication method type (factor) */
+    export const Type = {
+        PushNotification: "push-notification",
+    } as const;
+    export type Type = (typeof Type)[keyof typeof Type];
 }

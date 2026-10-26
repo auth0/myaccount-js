@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "../../../../BaseClient.js";
 import * as core from "../../../../core/index.js";
-import { mergeHeaders } from "../../../../core/headers.js";
+import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../core/headers.js";
 import * as environments from "../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../errors/handleNonStatusCodeError.js";
 import * as errors from "../../../../errors/index.js";
@@ -28,6 +28,7 @@ export class FactorsClient {
     /**
      * List of factors enabled for the Auth0 tenant and available for enrollment by this user.
      *
+     * @param {MyAccount.ListFactorsRequest} request
      * @param {FactorsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link MyAccount.BadRequestError}
@@ -39,21 +40,25 @@ export class FactorsClient {
      *     await client.factors.list()
      */
     public list(
+        request: MyAccount.ListFactorsRequest = {},
         requestOptions?: FactorsClient.RequestOptions,
     ): core.HttpResponsePromise<MyAccount.ListFactorsResponseContent> {
-        return core.HttpResponsePromise.fromPromise(this.__list(requestOptions));
+        return core.HttpResponsePromise.fromPromise(this.__list(request, requestOptions));
     }
 
     private async __list(
+        request: MyAccount.ListFactorsRequest = {},
         requestOptions?: FactorsClient.RequestOptions,
     ): Promise<core.WithRawResponse<MyAccount.ListFactorsResponseContent>> {
         const _metadata: core.EndpointMetadata = { security: [{ "Bearer-DPoP": ["read:me:factors"] }] };
+        const { "x-correlation-id": correlationId, traceparent } = request;
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
         let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
             _authRequest.headers,
             this._options?.headers,
+            mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
             requestOptions?.headers,
         );
         const _response = await (this._options.fetcher ?? core.fetcher)({

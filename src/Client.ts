@@ -2,7 +2,10 @@
 
 import { AuthenticationMethodsClient } from "./api/resources/authenticationMethods/client/Client.js";
 import { ConnectedAccountsClient } from "./api/resources/connectedAccounts/client/Client.js";
+import { ConsentsClient } from "./api/resources/consents/client/Client.js";
 import { FactorsClient } from "./api/resources/factors/client/Client.js";
+import { OrganizationsClient } from "./api/resources/organizations/client/Client.js";
+import { ProfileClient } from "./api/resources/profile/client/Client.js";
 import type { BaseClientOptions, BaseRequestOptions } from "./BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "./BaseClient.js";
 import * as core from "./core/index.js";
@@ -19,6 +22,9 @@ export class MyAccountClient {
     protected _factors: FactorsClient | undefined;
     protected _authenticationMethods: AuthenticationMethodsClient | undefined;
     protected _connectedAccounts: ConnectedAccountsClient | undefined;
+    protected _consents: ConsentsClient | undefined;
+    protected _organizations: OrganizationsClient | undefined;
+    protected _profile: ProfileClient | undefined;
 
     constructor(options: MyAccountClient.Options) {
         this._options = normalizeClientOptionsWithAuth(options);
@@ -34,6 +40,18 @@ export class MyAccountClient {
 
     public get connectedAccounts(): ConnectedAccountsClient {
         return (this._connectedAccounts ??= new ConnectedAccountsClient(this._options));
+    }
+
+    public get consents(): ConsentsClient {
+        return (this._consents ??= new ConsentsClient(this._options));
+    }
+
+    public get organizations(): OrganizationsClient {
+        return (this._organizations ??= new OrganizationsClient(this._options));
+    }
+
+    public get profile(): ProfileClient {
+        return (this._profile ??= new ProfileClient(this._options));
     }
 
     /**

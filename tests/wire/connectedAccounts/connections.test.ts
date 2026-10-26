@@ -23,10 +23,7 @@ describe("ConnectionsClient", () => {
             .build();
 
         const expected = rawResponseBody;
-        const page = await client.connectedAccounts.connections.list({
-            from: "from",
-            take: 1,
-        });
+        const page = await client.connectedAccounts.connections.list();
 
         expect(expected.connections).toEqual(page.data);
         expect(page.hasNextPage()).toBe(true);

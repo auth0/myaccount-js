@@ -3,7 +3,7 @@
 import type { BaseClientOptions, BaseRequestOptions } from "../../../../../../BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "../../../../../../BaseClient.js";
 import * as core from "../../../../../../core/index.js";
-import { mergeHeaders } from "../../../../../../core/headers.js";
+import { mergeHeaders, mergeOnlyDefinedHeaders } from "../../../../../../core/headers.js";
 import * as environments from "../../../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../../../errors/handleNonStatusCodeError.js";
 import * as errors from "../../../../../../errors/index.js";
@@ -34,10 +34,7 @@ export class ConnectionsClient {
      * @throws {@link MyAccount.TooManyRequestsError}
      *
      * @example
-     *     await client.connectedAccounts.connections.list({
-     *         from: "from",
-     *         take: 1
-     *     })
+     *     await client.connectedAccounts.connections.list()
      */
     public async list(
         request: MyAccount.ListConnectedAccountsConnectionsRequestParameters = {},
@@ -52,7 +49,7 @@ export class ConnectionsClient {
                 const _metadata: core.EndpointMetadata = {
                     security: [{ "Bearer-DPoP": ["read:me:connected_accounts"] }],
                 };
-                const { from: from_, take = 10 } = request;
+                const { from: from_, take = 10, "x-correlation-id": correlationId, traceparent } = request;
                 const _queryParams: Record<string, unknown> = {
                     from: from_,
                     take,
@@ -63,6 +60,7 @@ export class ConnectionsClient {
                 let _headers: core.Fetcher.Args["headers"] = mergeHeaders(
                     _authRequest.headers,
                     this._options?.headers,
+                    mergeOnlyDefinedHeaders({ "x-correlation-id": correlationId, traceparent: traceparent }),
                     requestOptions?.headers,
                 );
                 const _response = await (this._options.fetcher ?? core.fetcher)({
