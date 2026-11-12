@@ -4,6 +4,7 @@ import type { BaseClientOptions, BaseRequestOptions } from "../../../../BaseClie
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "../../../../BaseClient.js";
 import * as core from "../../../../core/index.js";
 import { mergeHeaders } from "../../../../core/headers.js";
+import { mergeAdditionalBodyParameters } from "../../../../core/requestBody.js";
 import * as environments from "../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../errors/handleNonStatusCodeError.js";
 import * as errors from "../../../../errors/index.js";
@@ -32,6 +33,8 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.list({
@@ -135,6 +138,8 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.create({
@@ -207,7 +212,7 @@ export class AuthenticationMethodsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: mergeAdditionalBodyParameters(request, requestOptions?.additionalBodyParameters),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -272,6 +277,8 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.NotFoundError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.get("authentication_method_id")
@@ -301,7 +308,7 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authentication_method_id, errors.MyAccountError)}`,
             ),
             method: "GET",
             headers: _headers,
@@ -373,7 +380,10 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.BadRequestError}
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.ConflictError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.delete("authentication_method_id")
@@ -405,7 +415,7 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authentication_method_id, errors.MyAccountError)}`,
             ),
             method: "DELETE",
             headers: _headers,
@@ -435,6 +445,11 @@ export class AuthenticationMethodsClient {
                     );
                 case 403:
                     throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
+                        _response.rawResponse,
+                    );
+                case 409:
+                    throw new MyAccount.ConflictError(
                         _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
@@ -472,6 +487,8 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.update("authentication_method_id")
@@ -505,14 +522,14 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}`,
+                `authentication-methods/${core.url.encodePathParam(authentication_method_id, errors.MyAccountError)}`,
             ),
             method: "PATCH",
             headers: _headers,
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: mergeAdditionalBodyParameters(request, requestOptions?.additionalBodyParameters),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -583,6 +600,8 @@ export class AuthenticationMethodsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.authenticationMethods.verify("authentication_method_id", {
@@ -647,14 +666,14 @@ export class AuthenticationMethodsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `authentication-methods/${core.url.encodePathParam(authentication_method_id)}/verify`,
+                `authentication-methods/${core.url.encodePathParam(authentication_method_id, errors.MyAccountError)}/verify`,
             ),
             method: "POST",
             headers: _headers,
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: mergeAdditionalBodyParameters(request, requestOptions?.additionalBodyParameters),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,

@@ -32,6 +32,8 @@ export class ConnectionsClient {
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.connectedAccounts.connections.list({

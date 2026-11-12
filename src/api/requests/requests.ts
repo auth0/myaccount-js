@@ -94,6 +94,64 @@ export interface ListConnectedAccountsRequestParameters {
 /**
  * @example
  *     {
+ *         decision: "approve"
+ *     }
+ *
+ * @example
+ *     {
+ *         decision: "approve",
+ *         signature: "<compact JWS over the signed payload>",
+ *         kid: "csk_72jbvv7LfRKYp59gtRLtkn"
+ *     }
+ *
+ * @example
+ *     {
+ *         decision: "approve",
+ *         signature: "<compact JWS over the signed payload>",
+ *         kid: "csk_72jbvv7LfRKYp59gtRLtkn",
+ *         challenge_response: "<challenge response JWT built by the Guardian SDK>"
+ *     }
+ *
+ * @example
+ *     {
+ *         decision: "deny"
+ *     }
+ */
+export interface DecideConsentRequestParameters {
+    decision: MyAccount.ConsentDecisionEnum;
+    /** Compact JWS serialization of the signed consent payload, produced by the device. Must be provided together with `kid`. */
+    signature?: string;
+    /** Key ID of the registered consent signing key used to produce `signature`. Must be provided together with `signature`. */
+    kid?: string;
+    /** Challenge response JWT that the device builds with the Guardian SDK from the consent's `challenge`. Send it when the consent was initiated through a push notification, to resolve the associated MFA transaction. */
+    challenge_response?: string;
+}
+
+/**
+ * @example
+ *     {
+ *         jwk: {
+ *             kty: "EC",
+ *             crv: "P-256",
+ *             alg: "ES256",
+ *             use: "sig",
+ *             x: "x",
+ *             y: "y"
+ *         },
+ *         device_identifier: "device_identifier"
+ *     }
+ */
+export interface CreateConsentSigningKeyRequestContent {
+    jwk: MyAccount.ConsentSigningKeyJwkRequest;
+    /** A human-readable label for the device holding the corresponding private key. This is a label only and is not a guarantee that the key is bound to that device. */
+    device_identifier: string;
+    /** When the key should expire. Optional; defaults to the maximum 2 year lifetime. Must be at least 1 hour in the future and no later than the default. */
+    expires_at?: string;
+}
+
+/**
+ * @example
+ *     {
  *         from: "from",
  *         take: 1
  *     }

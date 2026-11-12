@@ -2,6 +2,7 @@
 
 import { AuthenticationMethodsClient } from "./api/resources/authenticationMethods/client/Client.js";
 import { ConnectedAccountsClient } from "./api/resources/connectedAccounts/client/Client.js";
+import { ConsentsClient } from "./api/resources/consents/client/Client.js";
 import { FactorsClient } from "./api/resources/factors/client/Client.js";
 import type { BaseClientOptions, BaseRequestOptions } from "./BaseClient.js";
 import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } from "./BaseClient.js";
@@ -19,6 +20,7 @@ export class MyAccountClient {
     protected _factors: FactorsClient | undefined;
     protected _authenticationMethods: AuthenticationMethodsClient | undefined;
     protected _connectedAccounts: ConnectedAccountsClient | undefined;
+    protected _consents: ConsentsClient | undefined;
 
     constructor(options: MyAccountClient.Options) {
         this._options = normalizeClientOptionsWithAuth(options);
@@ -34,6 +36,10 @@ export class MyAccountClient {
 
     public get connectedAccounts(): ConnectedAccountsClient {
         return (this._connectedAccounts ??= new ConnectedAccountsClient(this._options));
+    }
+
+    public get consents(): ConsentsClient {
+        return (this._consents ??= new ConsentsClient(this._options));
     }
 
     /**

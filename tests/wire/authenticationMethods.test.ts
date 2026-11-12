@@ -1063,6 +1063,25 @@ describe("AuthenticationMethodsClient", () => {
             .mockEndpoint()
             .delete("/authentication-methods/authentication_method_id")
             .respondWith()
+            .statusCode(409)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        await expect(async () => {
+            return await client.authenticationMethods.delete("authentication_method_id");
+        }).rejects.toThrow(MyAccount.ConflictError);
+    });
+
+    test("delete (6)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+
+        const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
+
+        server
+            .mockEndpoint()
+            .delete("/authentication-methods/authentication_method_id")
+            .respondWith()
             .statusCode(429)
             .jsonBody(rawResponseBody)
             .build();

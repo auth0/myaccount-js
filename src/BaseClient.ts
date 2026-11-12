@@ -5,10 +5,18 @@ import * as core from "./core/index.js";
 import type { AuthProvider } from "./core/auth/index.js";
 import * as environments from "./environments.js";
 
+export type AuthOption =
+    | false
+    | core.AuthProvider["getAuthRequest"]
+    | core.AuthProvider
+    | BearerAuthProvider.AuthOptions;
+
 export type BaseClientOptions = {
     environment?: core.Supplier<environments.MyAccountEnvironment | string>;
     /** Specify a custom URL to connect the client to. */
     baseUrl?: core.Supplier<string>;
+    /** Defaults to "auth0.auth0.com". */
+    host?: string;
     /** Additional headers to include in requests. */
     headers?: Record<string, string | core.EndpointSupplier<string | null | undefined> | null | undefined>;
     /** The default maximum time to wait for a response in seconds. */
@@ -20,6 +28,10 @@ export type BaseClientOptions = {
     fetcher?: core.FetchFunction;
     /** Configure logging for the client. */
     logging?: core.logging.LogConfig | core.logging.Logger;
+    /** Default options for SSE stream reconnection behavior. Has no effect on non-resumable endpoints. */
+    stream?: { reconnectionEnabled?: boolean; maxReconnectionAttempts?: number };
+    /** Override auth. Pass false to disable, a function returning auth headers, an AuthProvider, or auth options. */
+    auth?: AuthOption;
 } & BearerAuthProvider.AuthOptions;
 
 export interface BaseRequestOptions {
@@ -31,8 +43,12 @@ export interface BaseRequestOptions {
     abortSignal?: AbortSignal;
     /** Additional query string parameters to include in the request. */
     queryParams?: Record<string, unknown>;
+    /** A dictionary containing additional parameters to spread into the request's body. */
+    additionalBodyParameters?: Record<string, unknown>;
     /** Additional headers to include in the request. */
     headers?: Record<string, string | core.EndpointSupplier<string | null | undefined> | null | undefined>;
+    /** Options for SSE stream reconnection behavior. Has no effect on non-resumable endpoints. */
+    stream?: { reconnectionEnabled?: boolean; maxReconnectionAttempts?: number };
 }
 
 export type NormalizedClientOptions<T extends BaseClientOptions = BaseClientOptions> = T & {
@@ -48,8 +64,20 @@ export type NormalizedClientOptionsWithAuth<T extends BaseClientOptions = BaseCl
 export function normalizeClientOptions<T extends BaseClientOptions = BaseClientOptions>(
     options: T,
 ): NormalizedClientOptions<T> {
+    let baseUrl = options?.baseUrl;
+    if (options?.host != null) {
+        const _host = options?.host ?? "auth0.auth0.com";
+        if (baseUrl == null) {
+            const _environmentUrls = new Map<unknown, string>([
+                [environments.MyAccountEnvironment.Default, `https://${_host}/me/v1`],
+            ]);
+            baseUrl = _environmentUrls.get(options?.environment) ?? `https://${_host}/me/v1`;
+        }
+    }
+
     return {
         ...options,
+        baseUrl,
         logging: core.logging.createLogger(options?.logging),
     } as NormalizedClientOptions<T>;
 }
@@ -58,6 +86,23 @@ export function normalizeClientOptionsWithAuth<T extends BaseClientOptions = Bas
     options: T,
 ): NormalizedClientOptionsWithAuth<T> {
     const normalized = normalizeClientOptions(options) as NormalizedClientOptionsWithAuth<T>;
+
+    if (options.auth === false) {
+        normalized.authProvider = new core.NoOpAuthProvider();
+        return normalized;
+    }
+    if (options.auth != null) {
+        if (typeof options.auth === "function") {
+            normalized.authProvider = { getAuthRequest: options.auth };
+            return normalized;
+        }
+        if (core.isAuthProvider(options.auth)) {
+            normalized.authProvider = options.auth;
+            return normalized;
+        }
+        Object.assign(normalized, options.auth);
+    }
+
     const normalizedWithNoOpAuthProvider = withNoOpAuthProvider(normalized);
     normalized.authProvider ??= new BearerAuthProvider(normalizedWithNoOpAuthProvider);
     return normalized;

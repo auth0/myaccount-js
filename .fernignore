@@ -50,3 +50,6 @@ examples/
 # Fern configuration
 
 .fern/
+.fern/replay.lock
+.fern/replay.yml
+.gitattributes

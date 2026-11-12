@@ -640,7 +640,7 @@ let page = await client.connectedAccounts.list({
     take: 1,
 });
 while (page.hasNextPage()) {
-    page = page.getNextPage();
+    page = await page.getNextPage();
 }
 
 // You can also access the underlying response
@@ -742,6 +742,453 @@ await client.connectedAccounts.delete("id");
 </dl>
 </details>
 
+## consents
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">list</a>() -> MyAccount.ListConsentsResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the list of consents for the authenticated user.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.list();
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">get</a>(consent_id) -> MyAccount.Consent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific consent for the authenticated user by ID.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.get("consent_id");
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**consent_id:** `string` — The ID of the consent to retrieve
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">decide</a>(consent_id, { ...params }) -> MyAccount.DecideConsentResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Approve or deny a pending consent for the authenticated user. When `signature` and `kid` are supplied, the consents service verifies the JWS signature against the user's registered consent signing key before recording the decision.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.decide("consent_id", {
+    decision: "approve",
+});
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**consent_id:** `string` — The ID of the consent to retrieve
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `MyAccount.DecideConsentRequestParameters`
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">listSigningKeys</a>() -> MyAccount.ListSigningKeysConsentResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the list of consent signing keys registered for the authenticated user.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.listSigningKeys();
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">createSigningKey</a>({ ...params }) -> MyAccount.ConsentSigningKey</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Register a consent signing key for the authenticated user. The key is used to verify signed consent decisions. Only the public key is supplied; the corresponding private key must never leave the device.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.createSigningKey({
+    jwk: {
+        kty: "EC",
+        crv: "P-256",
+        alg: "ES256",
+        use: "sig",
+        x: "x",
+        y: "y",
+    },
+    device_identifier: "device_identifier",
+});
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `MyAccount.CreateConsentSigningKeyRequestContent`
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">getSigningKey</a>(kid) -> MyAccount.GetSigningKeyConsentResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific consent signing key for the authenticated user by its key identifier.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.getSigningKey("kid");
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**kid:** `string` — The identifier of the consent signing key. This value is returned as `kid` when the key is registered.
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.consents.<a href="/src/api/resources/consents/client/Client.ts">deleteSigningKey</a>(kid) -> void</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a consent signing key registered by the authenticated user. Succeeds whether or not a key with the given identifier exists. Access tokens issued before the deletion remain verifiable, because the public key is embedded in the token at issuance.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.consents.deleteSigningKey("kid");
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**kid:** `string` — The identifier of the consent signing key. This value is returned as `kid` when the key is registered.
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ConsentsClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
 ## ConnectedAccounts Connections
 
 <details><summary><code>client.connectedAccounts.connections.<a href="/src/api/resources/connectedAccounts/resources/connections/client/Client.ts">list</a>({ ...params }) -> core.Page&lt;MyAccount.ConnectedAccountConnection, MyAccount.ListConnectedAccountsConnectionsResponseContent&gt;</code></summary>
@@ -786,7 +1233,7 @@ let page = await client.connectedAccounts.connections.list({
     take: 1,
 });
 while (page.hasNextPage()) {
-    page = page.getNextPage();
+    page = await page.getNextPage();
 }
 
 // You can also access the underlying response
