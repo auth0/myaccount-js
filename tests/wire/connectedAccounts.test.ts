@@ -264,6 +264,30 @@ describe("ConnectedAccountsClient", () => {
             .post("/connected-accounts/complete")
             .jsonBody(rawRequestBody)
             .respondWith()
+            .statusCode(409)
+            .jsonBody(rawResponseBody)
+            .build();
+
+        await expect(async () => {
+            return await client.connectedAccounts.complete({
+                auth_session: "auth_session",
+                connect_code: "x",
+                redirect_uri: "redirect_uri",
+            });
+        }).rejects.toThrow(MyAccount.ConflictError);
+    });
+
+    test("complete (6)", async () => {
+        const server = mockServerPool.createServer();
+        const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
+        const rawRequestBody = { auth_session: "auth_session", connect_code: "x", redirect_uri: "redirect_uri" };
+        const rawResponseBody = { type: "type", status: 1.1, title: "title", detail: "detail" };
+
+        server
+            .mockEndpoint()
+            .post("/connected-accounts/complete")
+            .jsonBody(rawRequestBody)
+            .respondWith()
             .statusCode(415)
             .jsonBody(rawResponseBody)
             .build();
@@ -277,7 +301,7 @@ describe("ConnectedAccountsClient", () => {
         }).rejects.toThrow(MyAccount.UnsupportedMediaTypeError);
     });
 
-    test("complete (6)", async () => {
+    test("complete (7)", async () => {
         const server = mockServerPool.createServer();
         const client = new MyAccountClient({ maxRetries: 0, token: "test", environment: server.baseUrl });
         const rawRequestBody = { auth_session: "auth_session", connect_code: "x", redirect_uri: "redirect_uri" };

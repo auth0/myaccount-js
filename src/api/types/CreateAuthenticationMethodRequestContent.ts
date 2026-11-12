@@ -7,8 +7,6 @@ import * as MyAccount from "../index.js";
  */
 export type CreateAuthenticationMethodRequestContent =
     | MyAccount.CreateAuthenticationMethodRequestContent.Passkey
-    | MyAccount.CreateAuthenticationMethodRequestContent.WebauthnPlatform
-    | MyAccount.CreateAuthenticationMethodRequestContent.WebauthnRoaming
     | MyAccount.CreateAuthenticationMethodRequestContent.Totp
     | MyAccount.CreateAuthenticationMethodRequestContent.PushNotification
     | MyAccount.CreateAuthenticationMethodRequestContent.RecoveryCode
@@ -19,14 +17,6 @@ export type CreateAuthenticationMethodRequestContent =
 export namespace CreateAuthenticationMethodRequestContent {
     export interface Passkey extends MyAccount.CreatePasskeyAuthenticationMethod {
         type: "passkey";
-    }
-
-    export interface WebauthnPlatform extends MyAccount.CreateWebAuthnPlatformAuthenticationMethod {
-        type: "webauthn-platform";
-    }
-
-    export interface WebauthnRoaming extends MyAccount.CreateWebAuthnRoamingAuthenticationMethod {
-        type: "webauthn-roaming";
     }
 
     export interface Totp extends MyAccount.CreateTotpAuthenticationMethod {

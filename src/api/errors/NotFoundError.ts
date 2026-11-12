@@ -5,6 +5,8 @@ import * as errors from "../../errors/index.js";
 import * as MyAccount from "../index.js";
 
 export class NotFoundError extends errors.MyAccountError {
+    declare public readonly body: MyAccount.ErrorResponse;
+
     constructor(body: MyAccount.ErrorResponse, rawResponse?: core.RawResponse) {
         super({
             message: "NotFoundError",
@@ -17,6 +19,6 @@ export class NotFoundError extends errors.MyAccountError {
             Error.captureStackTrace(this, this.constructor);
         }
 
-        this.name = this.constructor.name;
+        this.name = "NotFoundError";
     }
 }

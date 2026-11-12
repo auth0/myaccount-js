@@ -34,6 +34,8 @@ export class FactorsClient {
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.factors.list()

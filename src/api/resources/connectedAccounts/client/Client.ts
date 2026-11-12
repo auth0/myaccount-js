@@ -5,6 +5,7 @@ import { normalizeClientOptionsWithAuth, type NormalizedClientOptionsWithAuth } 
 import * as core from "../../../../core/index.js";
 import { mergeHeaders } from "../../../../core/headers.js";
 import { toJson } from "../../../../core/json.js";
+import { mergeAdditionalBodyParameters } from "../../../../core/requestBody.js";
 import * as environments from "../../../../environments.js";
 import { handleNonStatusCodeError } from "../../../../errors/handleNonStatusCodeError.js";
 import * as errors from "../../../../errors/index.js";
@@ -40,6 +41,8 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.connectedAccounts.create({
@@ -79,7 +82,7 @@ export class ConnectedAccountsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: mergeAdditionalBodyParameters(request, requestOptions?.additionalBodyParameters),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -142,8 +145,11 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.BadRequestError}
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
+     * @throws {@link MyAccount.ConflictError}
      * @throws {@link MyAccount.UnsupportedMediaTypeError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.connectedAccounts.complete({
@@ -184,7 +190,7 @@ export class ConnectedAccountsClient {
             contentType: "application/json",
             queryString: core.url.queryBuilder().mergeAdditional(requestOptions?.queryParams).build(),
             requestType: "json",
-            body: request,
+            body: mergeAdditionalBodyParameters(request, requestOptions?.additionalBodyParameters),
             timeoutMs: (requestOptions?.timeoutInSeconds ?? this._options?.timeoutInSeconds ?? 60) * 1000,
             maxRetries: requestOptions?.maxRetries ?? this._options?.maxRetries,
             abortSignal: requestOptions?.abortSignal,
@@ -213,6 +219,11 @@ export class ConnectedAccountsClient {
                     );
                 case 403:
                     throw new MyAccount.ForbiddenError(
+                        _response.error.body as MyAccount.ErrorResponse,
+                        _response.rawResponse,
+                    );
+                case 409:
+                    throw new MyAccount.ConflictError(
                         _response.error.body as MyAccount.ErrorResponse,
                         _response.rawResponse,
                     );
@@ -248,6 +259,8 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.connectedAccounts.list({
@@ -269,12 +282,13 @@ export class ConnectedAccountsClient {
                 };
                 const { connection, from: from_, take = 10 } = request;
                 const _queryParams: Record<string, unknown> = {
-                    connection:
-                        connection !== undefined
-                            ? typeof connection === "string"
-                                ? connection
-                                : toJson(connection)
-                            : undefined,
+                    connection: Array.isArray(connection)
+                        ? connection.map((item) => (typeof item === "string" ? item : toJson(item)))
+                        : connection !== undefined
+                          ? typeof connection === "string"
+                              ? connection
+                              : toJson(connection)
+                          : undefined,
                     from: from_,
                     take,
                 };
@@ -374,6 +388,8 @@ export class ConnectedAccountsClient {
      * @throws {@link MyAccount.UnauthorizedError}
      * @throws {@link MyAccount.ForbiddenError}
      * @throws {@link MyAccount.TooManyRequestsError}
+     * @throws {@link errors.MyAccountError}
+     * @throws {@link errors.MyAccountTimeoutError}
      *
      * @example
      *     await client.connectedAccounts.delete("id")
@@ -403,7 +419,7 @@ export class ConnectedAccountsClient {
                 (await core.Supplier.get(this._options.baseUrl)) ??
                     (await core.Supplier.get(this._options.environment)) ??
                     environments.MyAccountEnvironment.Default,
-                `connected-accounts/accounts/${core.url.encodePathParam(id)}`,
+                `connected-accounts/accounts/${core.url.encodePathParam(id, errors.MyAccountError)}`,
             ),
             method: "DELETE",
             headers: _headers,
