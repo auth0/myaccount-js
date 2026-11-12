@@ -22,15 +22,16 @@ type MyAccountClientConfig =
 export declare namespace MyAccountClient {
     /**
      * Base configuration options for the MyAccount Client.
-     * Extends the Fern client options but excludes token and environment
-     * as these are handled by our wrapper.
+     * Extends the Fern client options but excludes the options this wrapper
+     * handles itself (token, environment, baseUrl, fetcher) and the ones it
+     * does not forward to the underlying client (host, auth, stream).
      *
      * @group MyAccount API
      * @public
      */
     export interface MyAccountClientOptions extends Omit<
         FernClient.Options,
-        "token" | "environment" | "baseUrl" | "fetcher" | "fetch"
+        "token" | "environment" | "baseUrl" | "host" | "auth" | "stream" | "fetcher" | "fetch"
     > {
         /** Auth0 domain (e.g., 'your-tenant.auth0.com') */
         domain: string;
