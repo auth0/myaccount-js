@@ -332,6 +332,31 @@ describe("MyAccountClient", () => {
                 expect(client).toBeDefined();
             });
 
+            it("should not accept options the wrapper does not forward", () => {
+                const client = new MyAccountClient({
+                    domain: "tenant.auth0.com",
+                    token: "test-token",
+                    // @ts-expect-error host is ignored by the wrapper, use domain or baseUrl
+                    host: "other.auth0.com",
+                });
+                const withAuth = new MyAccountClient({
+                    domain: "tenant.auth0.com",
+                    token: "test-token",
+                    // @ts-expect-error auth is ignored by the wrapper, use token or fetcher
+                    auth: false,
+                });
+                const withStream = new MyAccountClient({
+                    domain: "tenant.auth0.com",
+                    token: "test-token",
+                    // @ts-expect-error stream is ignored by the wrapper
+                    stream: { reconnectionEnabled: true },
+                });
+
+                expect(client).toBeDefined();
+                expect(withAuth).toBeDefined();
+                expect(withStream).toBeDefined();
+            });
+
             it("should pass through additional options", () => {
                 const client = new MyAccountClient({
                     domain: "tenant.auth0.com",
