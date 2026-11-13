@@ -1,5 +1,24 @@
 # Change Log
 
+## [v1.0.0-beta.3](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.3) (2026-11-12)
+
+[Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.2...v1.0.0-beta.3)
+
+### Features
+
+- New `consents` client on `MyAccountClient` with `list()`, `get()`, `decide()`, `listSigningKeys()`, `createSigningKey()`, `getSigningKey()` and `deleteSigningKey()` for reviewing and deciding consent requests and managing consent signing keys, along with the related `Consent`, `ConsentDetails`, `ConsentSigningKey` and JWK types [#27](https://github.com/auth0/myaccount-js/pull/27)
+- `ConflictError` (409) and `UnprocessableEntityError` (422) error types. `authenticationMethods.delete()`, `connectedAccounts.complete()` and `consents.decide()` now throw `ConflictError`, and `consents.createSigningKey()` throws `UnprocessableEntityError` [#27](https://github.com/auth0/myaccount-js/pull/27)
+- `additionalBodyParameters` request option to spread extra parameters into the request body [#27](https://github.com/auth0/myaccount-js/pull/27)
+- `MyAccountError.requestId` getter that returns the request ID from the response headers [#27](https://github.com/auth0/myaccount-js/pull/27)
+
+### Fixes
+
+- Error `name` is now a fixed string instead of `constructor.name`, so it stays correct in minified builds [#27](https://github.com/auth0/myaccount-js/pull/27)
+
+### Breaking
+
+- Removed the `webauthn-platform` and `webauthn-roaming` variants from `CreateAuthenticationMethodRequestContent`, and removed the `CreateWebAuthnPlatformAuthenticationMethod` and `CreateWebAuthnRoamingAuthenticationMethod` types [#27](https://github.com/auth0/myaccount-js/pull/27)
+
 ## [v1.0.0-beta.2](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.2) (2026-05-28)
 
 [Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.1...v1.0.0-beta.2)
