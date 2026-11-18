@@ -9,4 +9,11 @@ on:
 jobs:
     snyk-cli:
         uses: auth0/devsecops-tooling/.github/workflows/sca-scan.yml@main
+        with:
+            # This repo uses pnpm. The shared workflow's "Handle Missing Lockfiles" step runs
+            # `npm install --package-lock-only` when pre-scan-commands is empty and no
+            # package-lock.json exists; that command crashes on pnpm repos. Any non-empty
+            # pre-scan-commands value causes the shared workflow to skip that step.
+            # Snyk then reads pnpm-lock.yaml directly via --all-projects.
+            pre-scan-commands: "true"
         secrets: inherit
