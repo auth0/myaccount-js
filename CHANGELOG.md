@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.0.0-beta.4](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.4) (2026-11-18)
+
+[Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.3...v1.0.0-beta.4)
+
+### Features
+
+- New `profile` client on `MyAccountClient` with `get()` and `patch()` for reading and updating the authenticated user's profile attributes. `get()` accepts `fields` and `include_fields` to select which attributes are returned and includes a per-field `profile_policy` showing which fields are writable. `patch()` updates `given_name`, `family_name`, `name`, `nickname` and `picture` [#30](https://github.com/auth0/myaccount-js/pull/30)
+- `GoneError` (410) error type, thrown by `profile.get()` and `profile.patch()` [#30](https://github.com/auth0/myaccount-js/pull/30)
+
 ## [v1.0.0-beta.3](https://github.com/auth0/myaccount-js/tree/v1.0.0-beta.3) (2026-11-12)
 
 [Full Changelog](https://github.com/auth0/myaccount-js/compare/v1.0.0-beta.2...v1.0.0-beta.3)
