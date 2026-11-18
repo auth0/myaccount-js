@@ -1189,6 +1189,137 @@ await client.consents.deleteSigningKey("kid");
 </dl>
 </details>
 
+## profile
+
+<details><summary><code>client.profile.<a href="/src/api/resources/profile/client/Client.ts">get</a>({ ...params }) -> MyAccount.GetProfileResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the authenticated user's profile attributes available for self-service management, with a per-field access policy indicating read/write eligibility.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.profile.get({
+    fields: ["given_name"],
+    include_fields: "true",
+});
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `MyAccount.GetProfileRequestParameters`
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ProfileClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.profile.<a href="/src/api/resources/profile/client/Client.ts">patch</a>({ ...params }) -> MyAccount.PatchProfileResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update the authenticated user's writable profile attributes.
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```typescript
+await client.profile.patch();
+```
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `MyAccount.PatchProfileRequestContent`
+
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**requestOptions:** `ProfileClient.RequestOptions`
+
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+</details>
+
 ## ConnectedAccounts Connections
 
 <details><summary><code>client.connectedAccounts.connections.<a href="/src/api/resources/connectedAccounts/resources/connections/client/Client.ts">list</a>({ ...params }) -> core.Page&lt;MyAccount.ConnectedAccountConnection, MyAccount.ListConnectedAccountsConnectionsResponseContent&gt;</code></summary>
