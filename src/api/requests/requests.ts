@@ -152,6 +152,32 @@ export interface CreateConsentSigningKeyRequestContent {
 /**
  * @example
  *     {
+ *         fields: ["given_name"],
+ *         include_fields: "true"
+ *     }
+ */
+export interface GetProfileRequestParameters {
+    /** Comma-separated list of field names to include or exclude (depending on include_fields). */
+    fields?: (MyAccount.ProfileFieldEnum | null) | (MyAccount.ProfileFieldEnum | null)[];
+    /** When true (default), return only the fields named in fields. When false, return all fields except those named in fields. Ignored when fields is absent. */
+    include_fields?: MyAccount.IncludeFieldsEnum | null;
+}
+
+/**
+ * @example
+ *     {}
+ */
+export interface PatchProfileRequestContent {
+    given_name?: MyAccount.SafeString150;
+    family_name?: MyAccount.SafeString150;
+    name?: MyAccount.SafeString300;
+    nickname?: MyAccount.SafeString300;
+    picture?: MyAccount.SafeUri;
+}
+
+/**
+ * @example
+ *     {
  *         from: "from",
  *         take: 1
  *     }
